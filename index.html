@@ -5,43 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>नेपाली पात्रो २०८३</title>
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Nepali%20Patro%202083%22,%22short_name%22:%22Patro%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23fdf2f2%22,%22theme_color%22:%22%23d32f2f%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3652/3652191.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
-    
     <style>
         :root { --main-red: #d32f2f; --bg: #fdf2f2; --blue: #1976d2; --gold: #ffd700; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
-        
-        .patro-container { width: 100%; max-width: 480px; background: white; border: 2px solid var(--main-red); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 10px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; }
+        .patro-container { width: 100%; max-width: 500px; background: white; border: 2px solid var(--main-red); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-top: 10px; }
         .header { background: var(--main-red); color: white; padding: 15px; text-align: center; }
         .header h1 { margin: 0; font-size: 1.5rem; }
         .nav-btns { display: flex; justify-content: space-between; margin-top: 10px; gap: 5px; }
-        
         button { background: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 6px; color: var(--main-red); font-weight: bold; transition: 0.2s; }
         .today-btn { background: var(--gold); color: #333; }
-
         .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background: #f5f5f5; text-align: center; font-weight: bold; padding: 10px 0; font-size: 0.8rem; border-bottom: 1px solid #ddd; }
         .weekdays div:last-child { color: var(--main-red); }
-
         .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-        .day-cell { border: 0.5px solid #eee; min-height: 80px; padding: 5px; display: flex; flex-direction: column; position: relative; transition: all 0.2s; cursor: pointer; }
-        
+        .day-cell { border: 0.5px solid #eee; min-height: 85px; padding: 5px; display: flex; flex-direction: column; position: relative; transition: all 0.2s; cursor: pointer; }
         .is-today { background-color: #fffde7 !important; border: 2px solid var(--gold) !important; z-index: 2; }
         .is-today::after { content: 'आज'; position: absolute; bottom: 2px; right: 2px; font-size: 0.6rem; background: var(--gold); padding: 1px 4px; border-radius: 3px; font-weight: bold; }
-
         .day-cell:hover { transform: scale(1.1); z-index: 10; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 5px; }
         .day-num { font-size: 1.3rem; font-weight: bold; margin-top: 4px; }
         .ad-num { font-size: 0.7rem; color: #999; text-align: right; }
         .holiday-text { font-size: 0.55rem; color: var(--main-red); margin-top: 2px; font-weight: bold; line-height: 1; }
         .is-sat { background-color: #fff1f1; color: var(--main-red); }
-
         .bulk-event-box { margin: 15px; padding: 12px; background: #e3f2fd; border: 1.5px solid #90caf9; border-radius: 8px; font-size: 0.85rem; line-height: 1.6; }
         .bulk-title { font-weight: bold; color: var(--blue); border-bottom: 1px solid #90caf9; margin-bottom: 8px; display: block; }
         .event-label { font-weight: bold; color: #d32f2f; }
-
         footer { margin-top: 15px; font-size: 0.85rem; color: #666; text-align: center; padding-bottom: 20px;}
     </style>
 </head>
 <body>
-
 <div class="patro-container">
     <div class="header">
         <h1 id="monthName">लोड हुँदै...</h1>
@@ -52,19 +42,15 @@
             <button onclick="changeMonth(1)">अर्को</button>
         </div>
     </div>
-
     <div class="weekdays">
         <div>आइत</div><div>सोम</div><div>मंगल</div><div>बुध</div><div>बिही</div><div>शुक्र</div><div>शनि</div>
     </div>
-
     <div id="daysGrid" class="days-grid"></div>
-
     <div class="bulk-event-box">
         <span class="bulk-title">📅 यस महिनाका शुभ साइतहरू:</span>
         <div id="bulkContent"></div>
     </div>
 </div>
-
 <footer>© Copyright 2026 - <b>Pratik Timsina</b></footer>
 
 <script>
@@ -72,32 +58,35 @@
     const toNep = (n) => n.toString().split('').map(d => isNaN(d) ? d : nepDigits[d] || d).join('');
 
     const patroData = [
-        { 
-            name: "चैत", year: 2082, days: 30, start: 0, eng: "Mar/Apr 2026", adStart: 15, 
-            holidays: {4: "घोडेजात्रा", 13: "राम नवमी", 15: "कामदा एकादशी", 30: "वरुथिनी एकादशी"},
-            events: { bibaha: "छैन", bartabanda: "३, ४, १०, २५ र २८ गते", pasni: "३, १०, १८ र २५ गते", shop: "४, १०, १८, २५, २८ र २९ गते", ghar: "छैन" }
-        },
-        { 
-            name: "बैशाख", year: 2083, days: 31, start: 2, eng: "Apr/May 2026", adStart: 14, 
-            holidays: {1: "नयाँ वर्ष", 11: "लोकतन्त्र दिवस", 18: "बुद्ध जयन्ती"},
-            events: { bibaha: "७, ८, २२, २३, २४, २५, ३० र ३१ गते", bartabanda: "२०, २१ र २३ गते", pasni: "७, १० र २१ गते", shop: "७, २१, २५ र ३१ गते", ghar: "३१ गते" }
-        },
-        { 
-            name: "जेठ", year: 2083, days: 31, start: 5, eng: "May/June 2026", adStart: 15, 
-            holidays: {15: "गणतन्त्र दिवस"},
-            events: { bibaha: "छैन", bartabanda: "छैन", pasni: "४, ७ र २२ गते", shop: "छैन", ghar: "छैन" }
-        }
+        { name: "चैत", year: 2082, days: 30, start: 0, eng: "Mar/Apr 2026", adStart: 15, holidays: {4: "घोडेजात्रा", 13: "राम नवमी", 15: "कामदा एकादशी"}, events: { bibaha: "छैन", bartabanda: "३, ४, १०, २५ र २८", pasni: "३, १०, १८ र २५", shop: "४, १०, १८, २५, २८ र २९", ghar: "छैन" } },
+        { name: "बैशाख", year: 2083, days: 31, start: 2, eng: "Apr/May 2026", adStart: 14, holidays: {1: "नयाँ वर्ष", 18: "बुद्ध जयन्ती"}, events: { bibaha: "७, ८, २२, २३, २४, २५, ३० र ३१", bartabanda: "२०, २१ र २३", pasni: "७, १० र २१", shop: "७, २१, २५ र ३१", ghar: "३१" } },
+        { name: "जेठ", year: 2083, days: 31, start: 5, eng: "May/June 2026", adStart: 15, holidays: {15: "गणतन्त्र दिवस"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "४, ७ र २२", shop: "छैन", ghar: "छैन" } },
+        { name: "असार", year: 2083, days: 32, start: 1, eng: "June/July 2026", adStart: 15, holidays: {15: "धान दिवस", 29: "भानु जयन्ती"}, events: { bibaha: "९, १३, १४, १५, १७, १८ र २३", bartabanda: "१०", pasni: "३, १०, १६ र १८", shop: "१०, १३ र १८", ghar: "छैन" } },
+        { name: "साउन", year: 2083, days: 31, start: 5, eng: "July/Aug 2026", adStart: 17, holidays: {1: "साउने संक्रान्ति", 15: "खीर खाने दिन"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "४, ८, १५, १८ र २०", shop: "छैन", ghar: "छैन" } },
+        { name: "भदौ", year: 2083, days: 31, start: 1, eng: "Aug/Sept 2026", adStart: 17, holidays: {12: "जनैपूर्णिमा", 29: "तीज"}, events: { bibaha: "छैन", bartabanda: "२५", pasni: "१, ३, १० र २९", shop: "१, ४, १४, १९, २८ र २९", ghar: "छैन" } },
+        { name: "असोज", year: 2083, days: 31, start: 4, eng: "Sept/Oct 2026", adStart: 17, holidays: {3: "संविधान दिवस", 25: "घटस्थापना"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "५ र २६", shop: "१ र ५", ghar: "छैन" } },
+        { name: "कार्तिक", year: 2083, days: 30, start: 0, eng: "Oct/Nov 2026", adStart: 18, holidays: {3: "विजया दशमी", 22: "लक्ष्मी पूजा", 25: "भाइ टिका"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "१३ र ३०", shop: "१५, १६, १९ र २९", ghar: "छैन" } },
+        { name: "मंसिर", year: 2083, days: 29, start: 2, eng: "Nov/Dec 2026", adStart: 17, holidays: {28: "विवाह पञ्चमी"}, events: { bibaha: "९, १०, १६, १७, १९, २४, २५ र २६", bartabanda: "छैन", pasni: "१० र १७", shop: "५, ६, ९, १०, १३, १७, १९ र २६", ghar: "छैन" } },
+        { name: "पुष", year: 2083, days: 30, start: 3, eng: "Dec/Jan 2026-27", adStart: 16, holidays: {15: "तमु ल्होसार", 27: "पृथ्वी जयन्ती"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "१ र १५", shop: "४, ११, १५ र २५", ghar: "छैन" } },
+        { name: "माघ", year: 2083, days: 29, start: 5, eng: "Jan/Feb 2027", adStart: 15, holidays: {1: "माघे संक्रान्ति", 16: "शहीद दिवस"}, events: { bibaha: "४, १२, १५, १९, २० र २७", bartabanda: "२५", pasni: "१५ र २५", shop: "९, १४ र २९", ghar: "छैन" } },
+        { name: "फागुन", year: 2083, days: 30, start: 6, eng: "Feb/Mar 2027", adStart: 13, holidays: {7: "प्रजातन्त्र दिवस", 22: "महा शिवरात्रि"}, events: { bibaha: "३, ४, ११, १२, १५, १६, १७, १८, २०, २५, २६ र ३०", bartabanda: "१०, १३ र २६", pasni: "७, १३ र २६", shop: "७, १३, २० र २६", ghar: "छैन" } },
+        { name: "चैत", year: 2083, days: 30, start: 1, eng: "Mar/Apr 2027", adStart: 15, holidays: {7: "फागु पूर्णिमा", 30: "चैते दशैं"}, events: { bibaha: "छैन", bartabanda: "३, ४, १०, २५ र २८", pasni: "३, १०, १८ र २५", shop: "४, १०, १८, २५, २८ र २९", ghar: "छैन" } }
     ];
 
     function getTodayInfo() {
-        const now = new Date(); // Current date: March 29, 2026
+        const now = new Date(); 
         const d = now.getDate();
-        const m = now.getMonth() + 1; 
+        const m = now.getMonth() + 1; // 3 = March, 4 = April
+        const y = now.getFullYear();
+
+        // 2026 Logic: March 15 to April 13 = Chaitra 2082
+        if (y === 2026 && m === 3 && d >= 15) return { monthIdx: 0, day: d - 14 };
+        if (y === 2026 && m === 4 && d < 14) return { monthIdx: 0, day: d + 17 };
         
-        // Calibration: March 29, 2026 is Chaitra 15, 2082
-        if (m === 3 && d >= 15) return { monthIdx: 0, day: d - 14 };
-        if (m === 4 && d < 14) return { monthIdx: 0, day: d + 17 };
-        return { monthIdx: 0, day: 15 }; 
+        // 2026 Logic: April 14 onwards = Baisakh 2083
+        if (y === 2026 && m === 4 && d >= 14) return { monthIdx: 1, day: d - 13 };
+        
+        return { monthIdx: 0, day: 1 }; // Fallback
     }
 
     const today = getTodayInfo();
@@ -107,7 +96,6 @@
         const m = patroData[currentIdx];
         document.getElementById('monthName').innerText = `${m.name} ${toNep(m.year)}`;
         document.getElementById('engDates').innerText = m.eng;
-        
         const grid = document.getElementById('daysGrid');
         grid.innerHTML = '';
 
@@ -148,7 +136,6 @@
     }
 
     render();
-
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", (e) => e.respondWith(fetch(e.request)));');
     }
