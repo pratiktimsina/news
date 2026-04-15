@@ -1,272 +1,720 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>नेपाली पात्रो २०८३</title>
-    
-    <meta name="theme-color" content="#d32f2f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3652/3652191.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Message For You 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose:     #e8567a;
+    --rose-lt:  #f7a8be;
+    --rose-dk:  #9c2a47;
+    --blush:    #fce4ed;
+    --cream:    #fff8f2;
+    --night:    #0d0618;
+    --night2:   #1a0a2e;
+    --night3:   #2d1254;
+    --gold:     #f0c080;
+    --gold-lt:  #fde8bc;
+    --text-lt:  #f9eef4;
+    --text-mid: #d4a0c0;
+    --text-dim: #8a5878;
+    --serif:    'Cormorant Garamond', Georgia, serif;
+    --sans:     'Jost', sans-serif;
+    --ease:     cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-    <link rel="manifest" href="data:application/json;base64,ewogICJpZCI6ICIvIiwKICAibmFtZSI6ICLgpKjgpYfgpKrgpL7gpLLgpYAg4KSq4KS+4KSk4KWN4KSwIDIwODMiLAogICJzaG9ydF9uYW1lIjogIrClpL7gpKTgpY3gpKkiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZkZjJmMiIsCiAgInRoZW1lX2NvbG9yIjogIiNkMzJmMmYiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8zNjUyLzM2NTIxOTEucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        :root { 
-            --main-red: #d32f2f; 
-            --bg: #fdf2f2; 
-            --blue: #1976d2; 
-            --gold: #ffd700; 
-            --white: #ffffff;
-        }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            background: var(--bg); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 10px; 
-            margin: 0; 
-            min-height: 100vh;
-        }
+  body {
+    font-family: var(--sans);
+    background: var(--night);
+    color: var(--text-lt);
+    overflow-x: hidden;
+    cursor: default;
+  }
 
-        /* Responsive Container */
-        .patro-container { 
-            width: 100%; 
-            max-width: 900px; /* Wider for Desktop */
-            background: var(--white); 
-            border-radius: 16px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
-            margin-top: 10px;
-        }
+  /* ─── CANVAS (stars) ─── */
+  #stars-canvas {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
 
-        /* Header styling */
-        .header { 
-            background: var(--main-red); 
-            color: white; 
-            padding: 20px; 
-            text-align: center; 
-        }
-        
-        .header h1 { margin: 0; font-size: 1.8rem; }
-        
-        .nav-btns { 
-            display: flex; 
-            justify-content: center; 
-            margin-top: 15px; 
-            gap: 15px; 
-        }
+  /* ─── SCREENS ─── */
+  .screen {
+    position: relative; z-index: 2;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.9s var(--ease);
+  }
+  .screen.active {
+    opacity: 1; pointer-events: all;
+  }
+  .screen.hidden { display: none; }
 
-        button { 
-            background: rgba(255,255,255,0.2); 
-            border: 1px solid white; 
-            padding: 10px 20px; 
-            cursor: pointer; 
-            border-radius: 30px; 
-            color: white; 
-            font-weight: bold; 
-            transition: 0.3s;
-        }
-        button:hover { background: white; color: var(--main-red); }
-        .today-btn { background: var(--gold); color: #333; border: none; }
+  /* ─── SCREEN 1: LANDING ─── */
+  #s1 { gap: 2rem; }
 
-        /* Grid Setup */
-        .weekdays { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr); 
-            background: #f8f9fa; 
-            text-align: center; 
-            font-weight: bold; 
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .weekdays div:last-child { color: var(--main-red); }
+  .envelope-scene { position: relative; cursor: pointer; }
 
-        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .petals-ring {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px; height: 200px;
+    pointer-events: none;
+  }
+  .petal {
+    position: absolute; top: 50%; left: 50%;
+    width: 14px; height: 28px;
+    border-radius: 50% 50% 0 0;
+    background: linear-gradient(160deg, #f7a8be, #e8567a);
+    opacity: 0.55;
+    transform-origin: bottom center;
+    animation: petalSpin 8s linear infinite;
+  }
 
-        .day-cell { 
-            border: 0.1px solid #f0f0f0; 
-            min-height: 100px; 
-            padding: 8px; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            transition: 0.2s; 
-            background: #fff;
-        }
+  @keyframes petalSpin {
+    from { transform: rotate(var(--deg)) translateY(-80px) rotate(calc(-1 * var(--deg))); }
+    to   { transform: rotate(calc(var(--deg) + 360deg)) translateY(-80px) rotate(calc(-1 * (var(--deg) + 360deg))); }
+  }
 
-        /* Desktop specific hover */
-        @media (min-width: 768px) {
-            .day-cell { min-height: 120px; }
-            .day-cell:hover { background: #fff9f9; transform: scale(1.02); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        }
+  .envelope {
+    position: relative;
+    width: 160px; height: 120px;
+    margin: 0 auto 0.5rem;
+    filter: drop-shadow(0 12px 40px rgba(232, 86, 122, 0.5));
+    transition: transform 0.4s var(--ease), filter 0.4s;
+  }
+  .envelope-scene:hover .envelope {
+    transform: scale(1.07) translateY(-4px);
+    filter: drop-shadow(0 20px 56px rgba(232, 86, 122, 0.7));
+  }
 
-        .is-today { background-color: #fffde7 !important; outline: 3px solid var(--gold); z-index: 2; }
-        .is-today::after { 
-            content: 'आज'; position: absolute; top: 5px; left: 5px; 
-            font-size: 0.7rem; background: var(--gold); padding: 2px 6px; 
-            border-radius: 4px; font-weight: bold; 
-        }
+  .env-body {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #e8567a, #c23060);
+    border-radius: 6px;
+  }
+  .env-shadow {
+    position: absolute; bottom: -6px; left: 10px; right: 10px;
+    height: 12px; border-radius: 50%;
+    background: rgba(232,86,122,0.3);
+    filter: blur(8px);
+  }
+  .env-line-left {
+    position: absolute; top: 0; left: 0;
+    width: 0; height: 0;
+    border-top: 64px solid rgba(0,0,0,0.12);
+    border-right: 80px solid transparent;
+  }
+  .env-line-right {
+    position: absolute; top: 0; right: 0;
+    width: 0; height: 0;
+    border-top: 64px solid rgba(0,0,0,0.12);
+    border-left: 80px solid transparent;
+  }
+  .env-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    width: 0; height: 0;
+    border-bottom: 68px solid rgba(0,0,0,0.1);
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+  }
+  .env-flap {
+    position: absolute; top: 0; left: 0; right: 0;
+    width: 0; height: 0;
+    border-top: 68px solid #d44070;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    transform-origin: top center;
+    transition: transform 0.7s var(--ease);
+  }
+  .envelope-scene:hover .env-flap { transform: rotateX(170deg); }
 
-        .day-num { font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
-        .ad-num { font-size: 0.8rem; color: #999; text-align: right; }
-        .holiday-text { font-size: 0.7rem; color: var(--main-red); margin-top: 5px; font-weight: bold; }
-        .is-sat { background-color: #fff5f5; color: var(--main-red); }
+  .heart-peek {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.6rem;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    z-index: 2;
+  }
 
-        /* Bottom Info Box */
-        .bulk-event-box { 
-            margin: 20px; 
-            padding: 20px; 
-            background: #f0f7ff; 
-            border-radius: 12px; 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
+  @keyframes heartbeat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    45%       { transform: translate(-50%, -50%) scale(1.22); }
+  }
 
-        .bulk-title { 
-            grid-column: 1 / -1;
-            font-weight: bold; color: var(--blue); 
-            font-size: 1.1rem; border-bottom: 2px solid #d0e3ff;
-            padding-bottom: 5px;
-        }
-        
-        .event-item { font-size: 0.9rem; }
-        .event-label { font-weight: bold; color: #d32f2f; display: block; margin-bottom: 2px; }
+  .tap-hint {
+    font-family: var(--sans);
+    font-size: 0.75rem; font-weight: 300;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rose-lt); opacity: 0.6;
+    margin-top: 0.25rem;
+    animation: breathe 2.5s ease-in-out infinite;
+  }
 
-        footer { margin: 20px 0; font-size: 0.9rem; color: #777; }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 0.8; }
+  }
 
-        /* Mobile Adjustments */
-        @media (max-width: 600px) {
-            .day-cell { min-height: 70px; padding: 4px; }
-            .day-num { font-size: 1.1rem; }
-            .holiday-text { font-size: 0.5rem; }
-            .header h1 { font-size: 1.3rem; }
-        }
-    </style>
+  .s1-title {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    background: linear-gradient(110deg, #fce4ed, #e8567a, #f0c080, #e8567a, #fce4ed);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 5s linear infinite;
+  }
+
+  .s1-sub {
+    font-family: var(--sans);
+    font-size: 0.9rem; font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--text-mid);
+    line-height: 1.8;
+    max-width: 340px;
+  }
+
+  @keyframes shimmer {
+    to { background-position: -250% center; }
+  }
+
+  /* ─── SCREEN 2: STORY ─── */
+  #s2 { gap: 0; padding-top: 4rem; padding-bottom: 4rem; }
+
+  .story-header {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 300; font-style: italic;
+    color: var(--rose-lt);
+    margin-bottom: 0.5rem;
+  }
+  .story-header-sub {
+    font-size: 0.75rem; font-weight: 300;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 3rem;
+  }
+
+  .cards-wrap {
+    display: flex; flex-direction: column; gap: 1.25rem;
+    width: 100%; max-width: 500px;
+  }
+
+  .memory-card {
+    position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(232, 86, 122, 0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.6rem;
+    text-align: left;
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  }
+  .memory-card.reveal { opacity: 1; transform: translateY(0); }
+  .memory-card::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,86,122,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-icon { font-size: 1.8rem; margin-bottom: 0.7rem; }
+  .card-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 0.45rem;
+  }
+  .card-text {
+    font-family: var(--serif);
+    font-size: 1.05rem; font-weight: 300;
+    line-height: 1.75; color: var(--text-lt);
+  }
+
+  .next-btn {
+    margin-top: 2.5rem;
+    padding: 0.9rem 2.8rem;
+    border-radius: 60px;
+    border: 0.5px solid rgba(232,86,122,0.5);
+    background: linear-gradient(135deg, rgba(232,86,122,0.15), rgba(156,42,71,0.15));
+    color: var(--rose-lt);
+    font-family: var(--sans);
+    font-size: 0.85rem; font-weight: 400;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.35s var(--ease);
+    backdrop-filter: blur(8px);
+  }
+  .next-btn:hover {
+    background: linear-gradient(135deg, rgba(232,86,122,0.35), rgba(156,42,71,0.35));
+    border-color: var(--rose);
+    box-shadow: 0 0 28px rgba(232,86,122,0.3);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* ─── SCREEN 3: QUESTION ─── */
+  #s3 { gap: 1.5rem; }
+
+  .orbit {
+    position: relative; width: 160px; height: 160px; margin: 0 auto;
+  }
+  .orbit-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 0.5px solid rgba(232,86,122,0.25);
+    animation: spinSlow 12s linear infinite;
+  }
+  .orbit-ring::before {
+    content: '✦';
+    position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--rose-lt);
+  }
+  .orbit-ring-2 {
+    position: absolute; inset: 18px; border-radius: 50%;
+    border: 0.5px solid rgba(240,192,128,0.2);
+    animation: spinSlow 8s linear infinite reverse;
+  }
+  .orbit-ring-2::before {
+    content: '✦';
+    position: absolute; bottom: -6px; right: 30%;
+    font-size: 8px; color: var(--gold);
+  }
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+  .center-heart {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4.5rem;
+    animation: heartbeat 1.3s ease-in-out infinite;
+    filter: drop-shadow(0 0 22px rgba(232,86,122,0.7));
+  }
+
+  .q-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 6.5vw, 3.5rem);
+    font-weight: 300; font-style: italic;
+    line-height: 1.2; color: #fff;
+    text-shadow: 0 0 40px rgba(232,86,122,0.35);
+  }
+  .q-sub {
+    font-family: var(--sans);
+    font-size: 0.9rem; font-weight: 300;
+    letter-spacing: 0.04em; line-height: 1.85;
+    color: var(--text-mid);
+    max-width: 360px;
+  }
+
+  .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+  .btn-yes {
+    padding: 1rem 3rem;
+    border-radius: 60px; border: none;
+    background: linear-gradient(135deg, #e8567a, #c23060);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow: 0 6px 32px rgba(232,86,122,0.45);
+    transition: all 0.3s var(--ease);
+    animation: yesGlow 2s ease-in-out infinite;
+  }
+  .btn-yes:hover {
+    transform: scale(1.06) translateY(-3px);
+    box-shadow: 0 12px 48px rgba(232,86,122,0.6);
+  }
+  @keyframes yesGlow {
+    0%,100% { box-shadow: 0 6px 32px rgba(232,86,122,0.4); }
+    50%      { box-shadow: 0 6px 48px rgba(232,86,122,0.7); }
+  }
+
+  .btn-no {
+    padding: 1rem 2.2rem;
+    border-radius: 60px;
+    border: 0.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 0.85rem; font-weight: 300;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  /* ─── SCREEN 4: YES ─── */
+  #s4 { gap: 1.8rem; }
+
+  .yes-ring-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto; }
+  .ring-glow {
+    position: absolute; inset: -30px;
+    background: radial-gradient(circle, rgba(240,192,128,0.25), transparent 65%);
+    border-radius: 50%;
+    animation: ringGlow 2s ease-in-out infinite;
+  }
+  @keyframes ringGlow {
+    0%,100% { transform: scale(0.9); opacity: 0.7; }
+    50%      { transform: scale(1.15); opacity: 1; }
+  }
+  .ring-emoji {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 4.5rem;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(240,192,128,0.6));
+  }
+  @keyframes float {
+    0%,100% { transform: translate(-50%,-50%) translateY(0); }
+    50%      { transform: translate(-50%,-50%) translateY(-10px); }
+  }
+
+  .yes-title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 9vw, 5.5rem);
+    font-weight: 300; font-style: italic;
+    line-height: 1.1;
+    background: linear-gradient(110deg, #fff, #fce4ed, #f0c080, #e8567a, #fce4ed, #fff);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3.5s linear infinite, bounceIn 0.8s var(--ease) forwards;
+  }
+  @keyframes bounceIn {
+    0%   { transform: scale(0.5); opacity: 0; }
+    60%  { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .yes-sub {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 300; font-style: italic;
+    line-height: 1.8; color: var(--text-mid);
+    max-width: 400px;
+  }
+
+  .divider {
+    width: 60px; height: 0.5px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    margin: 0 auto;
+  }
+
+  .forever-text {
+    font-family: var(--sans);
+    font-size: 0.7rem; font-weight: 300;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--rose);
+    opacity: 0.75;
+  }
+
+  /* ─── FLOATING HEARTS ─── */
+  .float-heart {
+    position: fixed; pointer-events: none; z-index: 50;
+    font-size: 1.3rem;
+    animation: riseUp 3s ease-out forwards;
+  }
+  @keyframes riseUp {
+    0%   { transform: translateY(0) rotate(var(--rot)); opacity: 0.9; }
+    100% { transform: translateY(-160px) rotate(calc(var(--rot) + 20deg)); opacity: 0; }
+  }
+
+  /* ─── CONFETTI ─── */
+  .conf-piece {
+    position: fixed; top: -20px;
+    pointer-events: none; z-index: 50;
+    width: var(--w); height: var(--h);
+    background: var(--c);
+    border-radius: var(--r);
+    animation: confFall var(--dur) linear var(--delay) forwards;
+  }
+  @keyframes confFall {
+    0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(var(--dx)); opacity: 0; }
+  }
+
+  /* ─── SPARKLE CURSOR TRAIL ─── */
+  .sparkle-dot {
+    position: fixed; pointer-events: none; z-index: 100;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--rose-lt);
+    animation: sparkFade 0.7s ease forwards;
+  }
+  @keyframes sparkFade {
+    to { transform: scale(0); opacity: 0; }
+  }
+
+  /* ─── PROGRESS DOTS ─── */
+  .progress-dots {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 20;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.4s, transform 0.3s;
+  }
+  .dot.active { background: var(--rose); transform: scale(1.35); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    .btn-row { flex-direction: column; align-items: center; }
+    .btn-yes, .btn-no { width: 220px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="patro-container">
-    <div class="header">
-        <h1 id="monthName">लोड हुँदै...</h1>
-        <div id="engDates" style="font-size: 0.9rem; opacity: 0.9; margin-top: 5px;">...</div>
-        <div class="nav-btns">
-            <button onclick="changeMonth(-1)">❮ पहिले</button>
-            <button class="today-btn" onclick="goToToday()">आज</button>
-            <button onclick="changeMonth(1)">अर्को ❯</button>
-        </div>
-    </div>
+<canvas id="stars-canvas"></canvas>
 
-    <div class="weekdays">
-        <div>आइत</div><div>सोम</div><div>मंगल</div><div>बुध</div><div>बिही</div><div>शुक्र</div><div>शनि</div>
-    </div>
-
-    <div id="daysGrid" class="days-grid"></div>
-
-    <div class="bulk-event-box">
-        <span class="bulk-title">📅 यस महिनाका शुभ साइतहरू:</span>
-        <div id="bulkContent" style="display: contents;"></div>
-    </div>
+<!-- Progress dots -->
+<div class="progress-dots" id="dots">
+  <div class="dot active" id="dot0"></div>
+  <div class="dot" id="dot1"></div>
+  <div class="dot" id="dot2"></div>
+  <div class="dot" id="dot3"></div>
 </div>
 
-<footer>© 2026 - <b>Pratik Timsina</b></footer>
+<!-- ── SCREEN 1: LANDING ── -->
+<div class="screen active" id="s1">
+  <div class="envelope-scene" onclick="goTo(2)" tabindex="0" role="button" aria-label="Open the letter">
+    <svg class="petals-ring" viewBox="0 0 200 200">
+      <!-- 8 petals rotating -->
+    </svg>
+    <div class="envelope">
+      <div class="env-body"></div>
+      <div class="env-line-left"></div>
+      <div class="env-line-right"></div>
+      <div class="env-bottom"></div>
+      <div class="env-flap"></div>
+      <div class="heart-peek">💌</div>
+      <div class="env-shadow"></div>
+    </div>
+    <p class="tap-hint">tap to open</p>
+  </div>
+  <h1 class="s1-title">A message<br>just for you</h1>
+  <p class="s1-sub">Something I've been meaning to say<br>for a long, long time…</p>
+</div>
+
+<!-- ── SCREEN 2: STORY ── -->
+<div class="screen hidden" id="s2">
+  <h2 class="story-header">Our little story</h2>
+  <p class="story-header-sub">a few moments I'll never forget</p>
+  <div class="cards-wrap" id="cards-wrap">
+    <div class="memory-card" id="c0">
+      <div class="card-icon">☕</div>
+      <div class="card-label">The beginning</div>
+      <div class="card-text">The day I first saw your smile, something shifted quietly inside me — like a door opening to a room I didn't know existed.</div>
+    </div>
+    <div class="memory-card" id="c1">
+      <div class="card-icon">🌙</div>
+      <div class="card-label">Late nights</div>
+      <div class="card-text">Talking until the world went still. I realised I never wanted those conversations to end — or for you to be anywhere but near me.</div>
+    </div>
+    <div class="memory-card" id="c2">
+      <div class="card-icon">🌸</div>
+      <div class="card-label">Every little thing</div>
+      <div class="card-text">Your laugh. The way you light up when you talk about the things you love. Your quiet kindness that makes everyone feel seen.</div>
+    </div>
+    <div class="memory-card" id="c3">
+      <div class="card-icon">✨</div>
+      <div class="card-label">Right now</div>
+      <div class="card-text">And here we are. My heart is so full because of you. There's only one thing left I've been wanting to ask…</div>
+    </div>
+  </div>
+  <button class="next-btn" onclick="goTo(3)">I'm ready →</button>
+</div>
+
+<!-- ── SCREEN 3: QUESTION ── -->
+<div class="screen hidden" id="s3">
+  <div class="orbit">
+    <div class="orbit-ring"></div>
+    <div class="orbit-ring-2"></div>
+    <div class="center-heart">💗</div>
+  </div>
+  <h2 class="q-title">Will you be<br>my girlfriend?</h2>
+  <p class="q-sub">You've made every single day warmer just by being in it. I want to keep building this story — together, with you.</p>
+  <div class="btn-row">
+    <button class="btn-yes" onclick="sayYes()">Yes, always! 💕</button>
+    <button class="btn-no" id="noBtn" onmouseenter="runAway()" onclick="runAway()">Maybe later…</button>
+  </div>
+</div>
+
+<!-- ── SCREEN 4: YES ── -->
+<div class="screen hidden" id="s4">
+  <div class="yes-ring-wrap">
+    <div class="ring-glow"></div>
+    <div class="ring-emoji">💍</div>
+  </div>
+  <div class="yes-title">She said yes!</div>
+  <div class="divider"></div>
+  <p class="yes-sub">You've made me the happiest person alive. This is only the beginning of our beautiful adventure together. I love you.</p>
+  <p class="forever-text">forever & always</p>
+</div>
 
 <script>
-    // [Keep the patroData and conversion logic from your original code]
-    const nepDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
-    const toNep = (n) => n.toString().split('').map(d => isNaN(d) ? d : nepDigits[d] || d).join('');
+// ─── STARS ────────────────────────────────
+const canvas = document.getElementById('stars-canvas');
+const ctx = canvas.getContext('2d');
+let stars = [], W, H;
 
-    const patroData = [
-        { name: "चैत", year: 2082, days: 30, start: 0, eng: "Mar/Apr 2026", adStart: 15, holidays: {4: "घोडेजात्रा", 13: "राम नवमी", 15: "कामदा एकादशी"}, events: { bibaha: "छैन", bartabanda: "३, ४, १०, २५ र २८", pasni: "३, १०, १८ र २५", shop: "४, १०, १८, २५, २८ र २९", ghar: "छैन" } },
-        { name: "बैशाख", year: 2083, days: 31, start: 2, eng: "Apr/May 2026", adStart: 14, holidays: {1: "नयाँ वर्ष", 11: "लोकतन्त्र दिवस", 18: "बुद्ध जयन्ती"}, events: { bibaha: "७, ८, २२, २३, २४, २५, ३० र ३१", bartabanda: "२०, २१ र २३", pasni: "७, १० र २१", shop: "७, २१, २५ र ३१", ghar: "३१" } },
-        { name: "जेठ", year: 2083, days: 31, start: 5, eng: "May/June 2026", adStart: 15, holidays: {15: "गणतन्त्र दिवस"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "४, ७ र २२", shop: "छैन", ghar: "छैन" } },
-        { name: "असार", year: 2083, days: 32, start: 1, eng: "June/July 2026", adStart: 15, holidays: {15: "धान दिवस", 29: "भानु जयन्ती"}, events: { bibaha: "९, १३, १४, १५, १७, १८ र २३", bartabanda: "१०", pasni: "३, १०, १६ र १८", shop: "१०, १३ र १८", ghar: "छैन" } },
-        { name: "साउन", year: 2083, days: 31, start: 5, eng: "July/Aug 2026", adStart: 17, holidays: {1: "साउने संक्रान्ति", 15: "खीर खाने दिन"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "४, ८, १५, १८ र २०", shop: "छैन", ghar: "छैन" } },
-        { name: "भदौ", year: 2083, days: 31, start: 1, eng: "Aug/Sept 2026", adStart: 17, holidays: {12: "जनैपूर्णिमा", 29: "तीज"}, events: { bibaha: "छैन", bartabanda: "२५", pasni: "१, ३, १० र २९", shop: "१, ४, १४, १९, २८ र २९", ghar: "छैन" } },
-        { name: "असोज", year: 2083, days: 31, start: 4, eng: "Sept/Oct 2026", adStart: 17, holidays: {3: "संविधान दिवस", 25: "घटस्थापना"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "५ र २६", shop: "१ र ५", ghar: "छैन" } },
-        { name: "कार्तिक", year: 2083, days: 30, start: 0, eng: "Oct/Nov 2026", adStart: 18, holidays: {3: "विजया दशमी", 22: "लक्ष्मी पूजा", 25: "भाइ टिका"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "१३ र ३०", shop: "१५, १६, १९ र २९", ghar: "छैन" } },
-        { name: "मंसिर", year: 2083, days: 29, start: 2, eng: "Nov/Dec 2026", adStart: 17, holidays: {28: "विवाह पञ्चमी"}, events: { bibaha: "९, १०, १६, १७, १९, २४, २५ र २६", bartabanda: "छैन", pasni: "१० र १७", shop: "५, ६, ९, १०, १३, १७, १९ र २६", ghar: "छैन" } },
-        { name: "पुष", year: 2083, days: 30, start: 3, eng: "Dec/Jan 2026-27", adStart: 16, holidays: {15: "तमु ल्होसार", 27: "पृथ्वी जयन्ती"}, events: { bibaha: "छैन", bartabanda: "छैन", pasni: "१ र १५", shop: "४, ११, १५ र २५", ghar: "छैन" } },
-        { name: "माघ", year: 2083, days: 29, start: 5, eng: "Jan/Feb 2027", adStart: 15, holidays: {1: "माघे संक्रान्ति", 16: "शहीद दिवस"}, events: { bibaha: "४, १२, १५, १९, २० र २७", bartabanda: "२५", pasni: "१५ र २५", shop: "९, १४ र २९", ghar: "छैन" } },
-        { name: "फागुन", year: 2083, days: 30, start: 6, eng: "Feb/Mar 2027", adStart: 13, holidays: {7: "प्रजातन्त्र दिवस", 22: "महा शिवरात्रि"}, events: { bibaha: "३, ४, ११, १२, १५, १६, १७, १८, २०, २५, २६ र ३०", bartabanda: "१०, १३ र २६", pasni: "७, १३ र २६", shop: "७, १३, २० र २६", ghar: "छैन" } },
-        { name: "चैत", year: 2083, days: 30, start: 1, eng: "Mar/Apr 2027", adStart: 15, holidays: {7: "फागु पूर्णिमा", 30: "चैते दशैं"}, events: { bibaha: "छैन", bartabanda: "३, ४, १०, २५ र २८", pasni: "३, १०, १८ र २५", shop: "४, १०, १८, २५, २८ र २९", ghar: "छैन" } }
-    ];
+function initStars() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  stars = Array.from({length: 180}, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    r: Math.random() * 1.4 + 0.2,
+    a: Math.random() * Math.PI * 2,
+    speed: Math.random() * 0.007 + 0.002
+  }));
+}
 
-    function getTodayInfo() {
-        const now = new Date();
-        const d = now.getDate();
-        const m = now.getMonth() + 1;
-        const y = now.getFullYear();
-        if (y === 2026 && m === 3 && d >= 15) return { monthIdx: 0, day: d - 14 };
-        if (y === 2026 && m === 4 && d < 14) return { monthIdx: 0, day: d + 17 };
-        if (y === 2026 && m === 4 && d >= 14) return { monthIdx: 1, day: d - 13 };
-        if (y === 2026 && m > 4) return { monthIdx: m - 3, day: d };
-        if (y === 2027) return { monthIdx: m + 9, day: d };
-        return { monthIdx: 0, day: 1 };
-    }
+function drawStars() {
+  ctx.clearRect(0, 0, W, H);
+  stars.forEach(s => {
+    s.a += s.speed;
+    const alpha = (Math.sin(s.a) + 1) / 2;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,200,228,${alpha * 0.65})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
 
-    const today = getTodayInfo();
-    let currentIdx = today.monthIdx;
+initStars(); drawStars();
+window.addEventListener('resize', initStars);
 
-    function render() {
-        const m = patroData[currentIdx];
-        document.getElementById('monthName').innerText = `${m.name} ${toNep(m.year)}`;
-        document.getElementById('engDates').innerText = m.eng;
-        const grid = document.getElementById('daysGrid');
-        grid.innerHTML = '';
+// ─── SCREEN MANAGER ───────────────────────
+let currentScreen = 1;
+const screenMap = { 1: 's1', 2: 's2', 3: 's3', 4: 's4' };
 
-        for(let i=0; i<m.start; i++) grid.innerHTML += `<div class="day-cell" style="background:#f9f9f9"></div>`;
+function goTo(n) {
+  const prev = document.getElementById(screenMap[currentScreen]);
+  const next = document.getElementById(screenMap[n]);
+  prev.classList.remove('active');
+  setTimeout(() => {
+    prev.classList.add('hidden');
+    next.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => next.classList.add('active'));
+    });
+  }, 400);
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === n-1));
+  currentScreen = n;
+  if (n === 2) revealCards();
+  if (n === 3) spawnHearts(4);
+}
 
-        for(let d=1; d<=m.days; d++) {
-            const isSat = (d + m.start) % 7 === 0;
-            const isToday = (today.monthIdx === currentIdx && today.day === d);
-            const holiday = m.holidays[d] || "";
-            let adDay = (m.adStart + d - 1);
-            if(adDay > 31) adDay = adDay - 31;
+// ─── CARD REVEAL ──────────────────────────
+function revealCards() {
+  ['c0','c1','c2','c3'].forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('reveal');
+    }, 200 + i * 220);
+  });
+}
 
-            grid.innerHTML += `
-                <div class="day-cell ${isSat ? 'is-sat' : ''} ${isToday ? 'is-today' : ''}">
-                    <div class="ad-num">${adDay}</div>
-                    <div class="day-num">${toNep(d)}</div>
-                    <div class="holiday-text">${holiday}</div>
-                </div>`;
-        }
+// ─── NO BUTTON ────────────────────────────
+let noHits = 0;
+function runAway() {
+  noHits++;
+  const btn = document.getElementById('noBtn');
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const bw = btn.offsetWidth + 20, bh = btn.offsetHeight + 20;
+  btn.style.position = 'fixed';
+  btn.style.left = Math.min(vw - bw, Math.max(8, Math.random() * (vw - bw))) + 'px';
+  btn.style.top  = Math.min(vh - bh, Math.max(8, Math.random() * (vh - bh))) + 'px';
+  btn.style.transition = 'left 0.25s ease, top 0.25s ease';
+  if (noHits >= 3) {
+    btn.textContent = '…okay, YES! 💕';
+    btn.style.color = '#f7a8be';
+    btn.onclick = sayYes;
+    btn.onmouseenter = null;
+  }
+}
 
-        document.getElementById('bulkContent').innerHTML = `
-            <div class="event-item"><span class="event-label">विवाह:</span> ${toNep(m.events.bibaha)}</div>
-            <div class="event-item"><span class="event-label">व्रतबन्ध:</span> ${toNep(m.events.bartabanda)}</div>
-            <div class="event-item"><span class="event-label">पास्नी:</span> ${toNep(m.events.pasni)}</div>
-            <div class="event-item"><span class="event-label">दुकान:</span> ${toNep(m.events.shop)}</div>
-            ${m.events.ghar !== "छैन" ? `<div class="event-item"><span class="event-label">घर:</span> ${toNep(m.events.ghar)}</div>` : ""}
-        `;
-    }
+// ─── SAY YES ──────────────────────────────
+function sayYes() {
+  goTo(4);
+  launchConfetti();
+  const hInt = setInterval(() => spawnHearts(6), 700);
+  setTimeout(() => clearInterval(hInt), 8000);
+}
 
-    function changeMonth(dir) {
-        currentIdx = (currentIdx + dir + patroData.length) % patroData.length;
-        render();
-    }
+// ─── FLOATING HEARTS ──────────────────────
+const HEARTS = ['💗','💕','💖','💝','🌸','✨','💓'];
+function spawnHearts(count) {
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const h = document.createElement('div');
+      h.className = 'float-heart';
+      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+      h.style.setProperty('--rot', (Math.random()*30 - 15) + 'deg');
+      h.style.left = (Math.random() * 88 + 6) + 'vw';
+      h.style.bottom = (Math.random() * 15 + 5) + 'vh';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 3100);
+    }, i * 120);
+  }
+}
 
-    function goToToday() {
-        currentIdx = today.monthIdx;
-        render();
-    }
+// ─── CONFETTI ─────────────────────────────
+const CONF_COLORS = ['#e8567a','#f7a8be','#fff','#f0c080','#fce4ed','#c23060','#ffd9e8'];
+function launchConfetti() {
+  for (let i = 0; i < 100; i++) {
+    const p = document.createElement('div');
+    p.className = 'conf-piece';
+    const size = Math.random() * 10 + 5;
+    p.style.setProperty('--w',   size + 'px');
+    p.style.setProperty('--h',   (Math.random() > 0.5 ? size : size * 2.2) + 'px');
+    p.style.setProperty('--c',   CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)]);
+    p.style.setProperty('--r',   (Math.random() > 0.5 ? '50%' : '2px'));
+    p.style.setProperty('--dur', (Math.random() * 1.8 + 1.6) + 's');
+    p.style.setProperty('--delay', (Math.random() * 1.2) + 's');
+    p.style.setProperty('--dx',  (Math.random() * 100 - 50) + 'px');
+    p.style.left = (Math.random() * 100) + 'vw';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 4500);
+  }
+  setTimeout(launchConfetti, 3800);
+}
 
-    render();
+// ─── SPARKLE CURSOR TRAIL ─────────────────
+document.addEventListener('mousemove', (e) => {
+  if (Math.random() > 0.35) return;
+  const d = document.createElement('div');
+  d.className = 'sparkle-dot';
+  d.style.left = (e.clientX - 3) + 'px';
+  d.style.top  = (e.clientY - 3) + 'px';
+  d.style.background = HEARTS.includes('✨') ? '#f0c080' : '#f7a8be';
+  d.style.background = Math.random() > 0.5 ? '#f7a8be' : '#f0c080';
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 720);
+});
 
-    // Register Service Worker for Offline/Install Support
-    if ('serviceWorker' in navigator) {
-        const swCode = `
-            self.addEventListener('install', e => e.waitUntil(caches.open('patro-v1').then(c => c.addAll(['./']))));
-            self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-        `;
-        const blob = new Blob([swCode], {type: 'application/javascript'});
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl);
-    }
+// Keyboard accessibility
+document.querySelector('.envelope-scene').addEventListener('keypress', e => {
+  if (e.key === 'Enter' || e.key === ' ') goTo(2);
+});
 </script>
 </body>
 </html>
