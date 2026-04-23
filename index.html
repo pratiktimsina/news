@@ -94,20 +94,6 @@ nav {
 }
 .nav-item.open > .dropdown { display: block; }
 
-.sub-dropdown { position: relative; }
-.sub-dropdown-menu {
-  display: none;
-  position: absolute; left: 100%; top: 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  min-width: 220px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  overflow: hidden;
-  z-index: 1000;
-}
-.sub-dropdown.open .sub-dropdown-menu { display: block; }
-
 .dropdown-item {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 16px;
@@ -613,12 +599,7 @@ footer strong { color: var(--accent); }
     <li class="nav-item">
       <button class="nav-link" onclick="toggleNav(this)">IOE Engineering <span class="arrow"></span></button>
       <div class="dropdown">
-        <div class="dropdown-item sub-dropdown" onclick="this.classList.toggle('open');event.stopPropagation()">
-          Civil Engineering <span class="sub-arrow"></span>
-          <div class="sub-dropdown-menu">
-            <div class="dropdown-item" onclick="showSemPage('civil-sem');closeAllNav()">View Semesters</div>
-          </div>
-        </div>
+        <div class="dropdown-item" onclick="showPage('civil');closeAllNav()">Civil Engineering</div>
         <div class="dropdown-item" onclick="showSemPage('computer-sem');closeAllNav()">Computer Engineering</div>
         <div class="dropdown-item" onclick="showSemPage('electronics-sem');closeAllNav()">Electronics Engineering</div>
         <div class="dropdown-item" onclick="showSemPage('electrical-sem');closeAllNav()">Electrical Engineering</div>
@@ -651,7 +632,7 @@ footer strong { color: var(--accent); }
   <div class="mobile-nav-item">
     <div class="mobile-nav-link" onclick="toggleMobileSub('m-ioe')">IOE Engineering <span>▾</span></div>
     <div class="mobile-nav-sub" id="m-ioe">
-      <div class="mobile-nav-sub-item" onclick="showSemPage('civil-sem');closeMobileNav()">Civil Engineering</div>
+      <div class="mobile-nav-sub-item" onclick="showPage('civil');closeMobileNav()">Civil Engineering</div>
       <div class="mobile-nav-sub-item" onclick="showSemPage('computer-sem');closeMobileNav()">Computer Engineering</div>
       <div class="mobile-nav-sub-item" onclick="showSemPage('electronics-sem');closeMobileNav()">Electronics Engineering</div>
       <div class="mobile-nav-sub-item" onclick="showSemPage('electrical-sem');closeMobileNav()">Electrical Engineering</div>
@@ -776,6 +757,34 @@ footer strong { color: var(--accent); }
   <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
 </div>
 
+<!-- CIVIL ENGINEERING FACULTY PAGE -->
+<div class="page" id="page-civil">
+  <div class="page-header">
+    <div class="page-header-back" onclick="showPage('ioe')">← Back to IOE Engineering</div>
+    <h1>Civil Engineering</h1>
+    <p>Institute of Engineering — Tribhuvan University · 4 Years · 8 Semesters</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">About This Program</div>
+    <div class="about-card" style="margin-bottom:28px">
+      <h3>Program Overview</h3>
+      <p>The Bachelor of Civil Engineering (B.E. Civil) at IOE is a four-year undergraduate program covering structural design, transportation, water resources, geotechnical, and environmental engineering. Students gain hands-on experience through lab sessions, field surveys, and a final project.</p>
+    </div>
+    <div class="page-section-label">Select a Semester</div>
+    <div class="sem-grid">
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',1)"><div class="sem-num">1</div><div class="sem-label">Semester 1</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',2)"><div class="sem-num">2</div><div class="sem-label">Semester 2</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',3)"><div class="sem-num">3</div><div class="sem-label">Semester 3</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',4)"><div class="sem-num">4</div><div class="sem-label">Semester 4</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',5)"><div class="sem-num">5</div><div class="sem-label">Semester 5</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',6)"><div class="sem-num">6</div><div class="sem-label">Semester 6</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',7)"><div class="sem-num">7</div><div class="sem-label">Semester 7</div></div>
+      <div class="sem-card" onclick="showSubjectsPage('civil-sem',8)"><div class="sem-num">8</div><div class="sem-label">Semester 8</div></div>
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+</div>
+
 <!-- IOE FACULTY PICKER -->
 <div class="page" id="page-ioe">
   <div class="page-header">
@@ -786,7 +795,7 @@ footer strong { color: var(--accent); }
   <div class="grid-page">
     <div class="page-section-label">Select Your Faculty</div>
     <div class="subject-grid">
-      <div class="subject-card" onclick="showSemPage('civil-sem')">
+      <div class="subject-card" onclick="showPage('civil')">
         <div class="subject-icon">🏗</div>
         <h3>Civil Engineering</h3>
         <p>8 semesters · TU affiliated</p>
@@ -1001,7 +1010,12 @@ function showSubjectsPage(key, sem) {
   document.getElementById('subj-page-title').textContent = d.title + ' — Semester ' + sem;
   document.getElementById('subj-page-sub').textContent = 'Browse or upload study materials for Semester ' + sem;
   document.getElementById('subj-back-btn').textContent = '← Back to Semesters';
-  document.getElementById('subj-back-btn').onclick = () => showSemPage(key);
+  // For civil, back goes to civil faculty page; others go to semesters page
+  if (key === 'civil-sem') {
+    document.getElementById('subj-back-btn').onclick = () => showPage('civil');
+  } else {
+    document.getElementById('subj-back-btn').onclick = () => showSemPage(key);
+  }
 
   const subjects = d.subjects[sem] || [];
   const list = document.getElementById('subj-list-container');
