@@ -1,720 +1,1096 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Message For You 💌</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<title>EduNest — by Pratik Timsina</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --rose:     #e8567a;
-    --rose-lt:  #f7a8be;
-    --rose-dk:  #9c2a47;
-    --blush:    #fce4ed;
-    --cream:    #fff8f2;
-    --night:    #0d0618;
-    --night2:   #1a0a2e;
-    --night3:   #2d1254;
-    --gold:     #f0c080;
-    --gold-lt:  #fde8bc;
-    --text-lt:  #f9eef4;
-    --text-mid: #d4a0c0;
-    --text-dim: #8a5878;
-    --serif:    'Cormorant Garamond', Georgia, serif;
-    --sans:     'Jost', sans-serif;
-    --ease:     cubic-bezier(0.4, 0, 0.2, 1);
-  }
+:root {
+  --bg: #f7f4ef;
+  --surface: #ffffff;
+  --text: #1a1814;
+  --muted: #6b6560;
+  --accent: #2d6a4f;
+  --accent2: #b5451b;
+  --border: #e2ddd8;
+  --nav-h: 64px;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 
-  body {
-    font-family: var(--sans);
-    background: var(--night);
-    color: var(--text-lt);
-    overflow-x: hidden;
-    cursor: default;
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
 
-  /* ─── CANVAS (stars) ─── */
-  #stars-canvas {
-    position: fixed; inset: 0;
-    width: 100%; height: 100%;
-    z-index: 0; pointer-events: none;
-  }
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  height: var(--nav-h);
+  background: rgba(247,244,239,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(16px, 4vw, 56px);
+}
 
-  /* ─── SCREENS ─── */
-  .screen {
-    position: relative; z-index: 2;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.9s var(--ease);
-  }
-  .screen.active {
-    opacity: 1; pointer-events: all;
-  }
-  .screen.hidden { display: none; }
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: var(--accent);
+  cursor: pointer;
+  letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--accent2); }
 
-  /* ─── SCREEN 1: LANDING ─── */
-  #s1 { gap: 2rem; }
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+  list-style: none;
+}
 
-  .envelope-scene { position: relative; cursor: pointer; }
+.nav-item { position: relative; }
 
-  .petals-ring {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px; height: 200px;
-    pointer-events: none;
-  }
-  .petal {
-    position: absolute; top: 50%; left: 50%;
-    width: 14px; height: 28px;
-    border-radius: 50% 50% 0 0;
-    background: linear-gradient(160deg, #f7a8be, #e8567a);
-    opacity: 0.55;
-    transform-origin: bottom center;
-    animation: petalSpin 8s linear infinite;
-  }
+.nav-link {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  border: none; background: none;
+}
+.nav-link:hover { background: var(--border); color: var(--accent); }
 
-  @keyframes petalSpin {
-    from { transform: rotate(var(--deg)) translateY(-80px) rotate(calc(-1 * var(--deg))); }
-    to   { transform: rotate(calc(var(--deg) + 360deg)) translateY(-80px) rotate(calc(-1 * (var(--deg) + 360deg))); }
-  }
+.nav-link .arrow {
+  width: 12px; height: 12px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.nav-item.open .arrow { transform: rotate(-135deg) translateY(-2px); }
 
-  .envelope {
-    position: relative;
-    width: 160px; height: 120px;
-    margin: 0 auto 0.5rem;
-    filter: drop-shadow(0 12px 40px rgba(232, 86, 122, 0.5));
-    transition: transform 0.4s var(--ease), filter 0.4s;
-  }
-  .envelope-scene:hover .envelope {
-    transform: scale(1.07) translateY(-4px);
-    filter: drop-shadow(0 20px 56px rgba(232, 86, 122, 0.7));
-  }
+.dropdown {
+  display: none;
+  position: absolute; top: calc(100% + 6px); left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-width: 200px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  overflow: hidden;
+  z-index: 999;
+}
+.nav-item.open > .dropdown { display: block; }
 
-  .env-body {
-    position: absolute; inset: 0;
-    background: linear-gradient(160deg, #e8567a, #c23060);
-    border-radius: 6px;
-  }
-  .env-shadow {
-    position: absolute; bottom: -6px; left: 10px; right: 10px;
-    height: 12px; border-radius: 50%;
-    background: rgba(232,86,122,0.3);
-    filter: blur(8px);
-  }
-  .env-line-left {
-    position: absolute; top: 0; left: 0;
-    width: 0; height: 0;
-    border-top: 64px solid rgba(0,0,0,0.12);
-    border-right: 80px solid transparent;
-  }
-  .env-line-right {
-    position: absolute; top: 0; right: 0;
-    width: 0; height: 0;
-    border-top: 64px solid rgba(0,0,0,0.12);
-    border-left: 80px solid transparent;
-  }
-  .env-bottom {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    width: 0; height: 0;
-    border-bottom: 68px solid rgba(0,0,0,0.1);
-    border-left: 80px solid transparent;
-    border-right: 80px solid transparent;
-  }
-  .env-flap {
-    position: absolute; top: 0; left: 0; right: 0;
-    width: 0; height: 0;
-    border-top: 68px solid #d44070;
-    border-left: 80px solid transparent;
-    border-right: 80px solid transparent;
-    transform-origin: top center;
-    transition: transform 0.7s var(--ease);
-  }
-  .envelope-scene:hover .env-flap { transform: rotateX(170deg); }
+.sub-dropdown { position: relative; }
+.sub-dropdown-menu {
+  display: none;
+  position: absolute; left: 100%; top: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-width: 220px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  overflow: hidden;
+  z-index: 1000;
+}
+.sub-dropdown.open .sub-dropdown-menu { display: block; }
 
-  .heart-peek {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.6rem;
-    animation: heartbeat 1.5s ease-in-out infinite;
-    z-index: 2;
-  }
+.dropdown-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  font-size: 0.87rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dropdown-item:hover { background: #f0ede8; color: var(--accent); }
+.dropdown-item .sub-arrow {
+  width: 10px; height: 10px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
 
-  @keyframes heartbeat {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    45%       { transform: translate(-50%, -50%) scale(1.22); }
-  }
+/* Hamburger */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px; cursor: pointer;
+  padding: 8px; border: none; background: none;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all 0.3s;
+}
 
-  .tap-hint {
-    font-family: var(--sans);
-    font-size: 0.75rem; font-weight: 300;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--rose-lt); opacity: 0.6;
-    margin-top: 0.25rem;
-    animation: breathe 2.5s ease-in-out infinite;
-  }
+/* Mobile nav */
+.mobile-nav {
+  display: none;
+  position: fixed; top: var(--nav-h); left:0; right:0; bottom:0;
+  background: var(--bg);
+  overflow-y: auto;
+  z-index: 999;
+  padding: 16px;
+}
+.mobile-nav.open { display: block; }
+.mobile-nav-item {
+  border-bottom: 1px solid var(--border);
+}
+.mobile-nav-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.mobile-nav-sub {
+  display: none;
+  padding-left: 16px;
+}
+.mobile-nav-sub.open { display: block; }
+.mobile-nav-sub-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.mobile-nav-sub-item:hover { color: var(--accent); }
+.mobile-nav-sub-sub { display: none; padding-left: 16px; }
+.mobile-nav-sub-sub.open { display: block; }
+.mobile-nav-sub-sub-item {
+  padding: 8px 8px;
+  font-size: 0.84rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.mobile-nav-sub-sub-item:hover { color: var(--accent); }
 
-  @keyframes breathe {
-    0%, 100% { opacity: 0.4; }
-    50%       { opacity: 0.8; }
-  }
+/* ── PAGES ── */
+.page { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+.page.active { display: block; }
 
-  .s1-title {
-    font-family: var(--serif);
-    font-size: clamp(2.4rem, 7vw, 4rem);
-    font-weight: 300;
-    line-height: 1.15;
-    letter-spacing: 0.02em;
-    background: linear-gradient(110deg, #fce4ed, #e8567a, #f0c080, #e8567a, #fce4ed);
-    background-size: 250% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 5s linear infinite;
-  }
+/* ── HOME ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: calc(100vh - var(--nav-h));
+  align-items: stretch;
+}
 
-  .s1-sub {
-    font-family: var(--sans);
-    font-size: 0.9rem; font-weight: 300;
-    letter-spacing: 0.06em;
-    color: var(--text-mid);
-    line-height: 1.8;
-    max-width: 340px;
-  }
+.hero-text {
+  padding: clamp(40px, 8vw, 100px) clamp(24px, 5vw, 72px);
+  display: flex; flex-direction: column; justify-content: center;
+}
 
-  @keyframes shimmer {
-    to { background-position: -250% center; }
-  }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #e8f5ee; color: var(--accent);
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+}
 
-  /* ─── SCREEN 2: STORY ─── */
-  #s2 { gap: 0; padding-top: 4rem; padding-bottom: 4rem; }
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+}
+.hero-title em { color: var(--accent); font-style: normal; }
 
-  .story-header {
-    font-family: var(--serif);
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
-    font-weight: 300; font-style: italic;
-    color: var(--rose-lt);
-    margin-bottom: 0.5rem;
-  }
-  .story-header-sub {
-    font-size: 0.75rem; font-weight: 300;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--text-dim); margin-bottom: 3rem;
-  }
+.hero-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 36px;
+}
 
-  .cards-wrap {
-    display: flex; flex-direction: column; gap: 1.25rem;
-    width: 100%; max-width: 500px;
-  }
+.hero-cards {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
 
-  .memory-card {
-    position: relative;
-    background: rgba(255,255,255,0.04);
-    border: 0.5px solid rgba(232, 86, 122, 0.2);
-    border-radius: 20px;
-    padding: 1.5rem 1.6rem;
-    text-align: left;
-    backdrop-filter: blur(12px);
-    overflow: hidden;
-    opacity: 0; transform: translateY(28px);
-    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-  }
-  .memory-card.reveal { opacity: 1; transform: translateY(0); }
-  .memory-card::before {
-    content: '';
-    position: absolute; top: -30px; right: -30px;
-    width: 90px; height: 90px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,86,122,0.12), transparent 70%);
-    pointer-events: none;
-  }
+.hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.hero-card:hover {
+  border-color: var(--accent);
+  background: #e8f5ee;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45,106,79,0.12);
+}
 
-  .card-icon { font-size: 1.8rem; margin-bottom: 0.7rem; }
-  .card-label {
-    font-size: 0.65rem; font-weight: 500;
-    letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--rose); margin-bottom: 0.45rem;
-  }
-  .card-text {
-    font-family: var(--serif);
-    font-size: 1.05rem; font-weight: 300;
-    line-height: 1.75; color: var(--text-lt);
-  }
+.hero-photo {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+}
 
-  .next-btn {
-    margin-top: 2.5rem;
-    padding: 0.9rem 2.8rem;
-    border-radius: 60px;
-    border: 0.5px solid rgba(232,86,122,0.5);
-    background: linear-gradient(135deg, rgba(232,86,122,0.15), rgba(156,42,71,0.15));
-    color: var(--rose-lt);
-    font-family: var(--sans);
-    font-size: 0.85rem; font-weight: 400;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.35s var(--ease);
-    backdrop-filter: blur(8px);
-  }
-  .next-btn:hover {
-    background: linear-gradient(135deg, rgba(232,86,122,0.35), rgba(156,42,71,0.35));
-    border-color: var(--rose);
-    box-shadow: 0 0 28px rgba(232,86,122,0.3);
-    color: #fff;
-    transform: translateY(-2px);
-  }
+.hero-photo::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
 
-  /* ─── SCREEN 3: QUESTION ─── */
-  #s3 { gap: 1.5rem; }
+.avatar-wrap {
+  position: relative; z-index:1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px;
+  padding: 40px;
+}
 
-  .orbit {
-    position: relative; width: 160px; height: 160px; margin: 0 auto;
-  }
-  .orbit-ring {
-    position: absolute; inset: 0; border-radius: 50%;
-    border: 0.5px solid rgba(232,86,122,0.25);
-    animation: spinSlow 12s linear infinite;
-  }
-  .orbit-ring::before {
-    content: '✦';
-    position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
-    font-size: 10px; color: var(--rose-lt);
-  }
-  .orbit-ring-2 {
-    position: absolute; inset: 18px; border-radius: 50%;
-    border: 0.5px solid rgba(240,192,128,0.2);
-    animation: spinSlow 8s linear infinite reverse;
-  }
-  .orbit-ring-2::before {
-    content: '✦';
-    position: absolute; bottom: -6px; right: 30%;
-    font-size: 8px; color: var(--gold);
-  }
-  @keyframes spinSlow { to { transform: rotate(360deg); } }
+.avatar-ring {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
 
-  .center-heart {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4.5rem;
-    animation: heartbeat 1.3s ease-in-out infinite;
-    filter: drop-shadow(0 0 22px rgba(232,86,122,0.7));
-  }
+.avatar-inner {
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  color: rgba(255,255,255,0.9);
+  overflow: hidden;
+}
 
-  .q-title {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 6.5vw, 3.5rem);
-    font-weight: 300; font-style: italic;
-    line-height: 1.2; color: #fff;
-    text-shadow: 0 0 40px rgba(232,86,122,0.35);
-  }
-  .q-sub {
-    font-family: var(--sans);
-    font-size: 0.9rem; font-weight: 300;
-    letter-spacing: 0.04em; line-height: 1.85;
-    color: var(--text-mid);
-    max-width: 360px;
-  }
+.avatar-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-  .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+.avatar-name {
+  color: white;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+.avatar-sub {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.82rem;
+  text-align: center;
+}
 
-  .btn-yes {
-    padding: 1rem 3rem;
-    border-radius: 60px; border: none;
-    background: linear-gradient(135deg, #e8567a, #c23060);
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 0.9rem; font-weight: 500;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    box-shadow: 0 6px 32px rgba(232,86,122,0.45);
-    transition: all 0.3s var(--ease);
-    animation: yesGlow 2s ease-in-out infinite;
-  }
-  .btn-yes:hover {
-    transform: scale(1.06) translateY(-3px);
-    box-shadow: 0 12px 48px rgba(232,86,122,0.6);
-  }
-  @keyframes yesGlow {
-    0%,100% { box-shadow: 0 6px 32px rgba(232,86,122,0.4); }
-    50%      { box-shadow: 0 6px 48px rgba(232,86,122,0.7); }
-  }
+.info-chips {
+  display: flex; flex-direction: column; gap: 8px;
+  width: 100%;
+}
+.chip {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.8rem;
+  display: flex; gap: 8px;
+}
+.chip-label { color: rgba(255,255,255,0.45); min-width: 60px; }
 
-  .btn-no {
-    padding: 1rem 2.2rem;
-    border-radius: 60px;
-    border: 0.5px solid rgba(255,255,255,0.15);
-    background: transparent;
-    color: var(--text-dim);
-    font-family: var(--sans);
-    font-size: 0.85rem; font-weight: 300;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-  }
+/* About section */
+.section {
+  padding: clamp(48px, 8vw, 96px) clamp(24px, 5vw, 72px);
+  max-width: 1100px; margin: 0 auto;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 32px;
+}
+.section-title span { color: var(--accent); }
 
-  /* ─── SCREEN 4: YES ─── */
-  #s4 { gap: 1.8rem; }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
 
-  .yes-ring-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto; }
-  .ring-glow {
-    position: absolute; inset: -30px;
-    background: radial-gradient(circle, rgba(240,192,128,0.25), transparent 65%);
-    border-radius: 50%;
-    animation: ringGlow 2s ease-in-out infinite;
-  }
-  @keyframes ringGlow {
-    0%,100% { transform: scale(0.9); opacity: 0.7; }
-    50%      { transform: scale(1.15); opacity: 1; }
-  }
-  .ring-emoji {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    font-size: 4.5rem;
-    animation: float 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 18px rgba(240,192,128,0.6));
-  }
-  @keyframes float {
-    0%,100% { transform: translate(-50%,-50%) translateY(0); }
-    50%      { transform: translate(-50%,-50%) translateY(-10px); }
-  }
+.about-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+}
+.about-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  display: flex; gap: 10px; align-items: center;
+}
+.about-card h3::before {
+  content: '';
+  width: 4px; height: 20px;
+  background: var(--accent);
+  border-radius: 2px;
+  display: block;
+}
+.about-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
 
-  .yes-title {
-    font-family: var(--serif);
-    font-size: clamp(2.8rem, 9vw, 5.5rem);
-    font-weight: 300; font-style: italic;
-    line-height: 1.1;
-    background: linear-gradient(110deg, #fff, #fce4ed, #f0c080, #e8567a, #fce4ed, #fff);
-    background-size: 250% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3.5s linear infinite, bounceIn 0.8s var(--ease) forwards;
-  }
-  @keyframes bounceIn {
-    0%   { transform: scale(0.5); opacity: 0; }
-    60%  { transform: scale(1.05); }
-    100% { transform: scale(1); opacity: 1; }
-  }
+.edu-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.edu-item:last-child { border-bottom: none; }
+.edu-year { font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
+.edu-school { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
 
-  .yes-sub {
-    font-family: var(--serif);
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    font-weight: 300; font-style: italic;
-    line-height: 1.8; color: var(--text-mid);
-    max-width: 400px;
-  }
+/* ── INNER PAGES ── */
+.page-header {
+  background: linear-gradient(135deg, var(--accent) 0%, #1b4332 100%);
+  padding: clamp(40px, 6vw, 80px) clamp(24px, 5vw, 72px);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; top: -50%; right: -10%;
+  width: 500px; height: 500px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.page-header-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+.page-header-back:hover { color: white; }
+.page-header-back::before {
+  content: '←';
+  font-size: 1rem;
+}
+.page-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 900;
+  letter-spacing: -1px;
+  position: relative; z-index:1;
+}
+.page-header p {
+  color: rgba(255,255,255,0.7);
+  margin-top: 8px;
+  font-size: 0.92rem;
+  position: relative; z-index:1;
+}
 
-  .divider {
-    width: 60px; height: 0.5px;
-    background: linear-gradient(90deg, transparent, var(--rose), transparent);
-    margin: 0 auto;
-  }
+.grid-page {
+  padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 72px);
+  max-width: 1000px; margin: 0 auto;
+}
 
-  .forever-text {
-    font-family: var(--sans);
-    font-size: 0.7rem; font-weight: 300;
-    letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--rose);
-    opacity: 0.75;
-  }
+/* Class grids */
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
 
-  /* ─── FLOATING HEARTS ─── */
-  .float-heart {
-    position: fixed; pointer-events: none; z-index: 50;
-    font-size: 1.3rem;
-    animation: riseUp 3s ease-out forwards;
-  }
-  @keyframes riseUp {
-    0%   { transform: translateY(0) rotate(var(--rot)); opacity: 0.9; }
-    100% { transform: translateY(-160px) rotate(calc(var(--rot) + 20deg)); opacity: 0; }
-  }
+.subject-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.subject-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(45,106,79,0.12);
+}
+.subject-icon {
+  width: 44px; height: 44px;
+  background: #e8f5ee;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+.subject-card h3 { font-size: 0.95rem; font-weight: 600; }
+.subject-card p { font-size: 0.8rem; color: var(--muted); }
 
-  /* ─── CONFETTI ─── */
-  .conf-piece {
-    position: fixed; top: -20px;
-    pointer-events: none; z-index: 50;
-    width: var(--w); height: var(--h);
-    background: var(--c);
-    border-radius: var(--r);
-    animation: confFall var(--dur) linear var(--delay) forwards;
-  }
-  @keyframes confFall {
-    0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
-    80%  { opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg) translateX(var(--dx)); opacity: 0; }
-  }
+/* Semester grid */
+.sem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+}
+.sem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.sem-card:hover {
+  border-color: var(--accent);
+  background: #e8f5ee;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(45,106,79,0.12);
+}
+.sem-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+}
+.sem-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
 
-  /* ─── SPARKLE CURSOR TRAIL ─── */
-  .sparkle-dot {
-    position: fixed; pointer-events: none; z-index: 100;
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--rose-lt);
-    animation: sparkFade 0.7s ease forwards;
-  }
-  @keyframes sparkFade {
-    to { transform: scale(0); opacity: 0; }
-  }
+/* Subjects inner */
+.subjects-list {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 8px;
+}
+.subjects-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.subjects-item:hover {
+  border-color: var(--accent);
+  background: #f8fdf9;
+  box-shadow: 0 4px 16px rgba(45,106,79,0.08);
+}
+.subjects-item-left { display: flex; align-items: center; gap: 14px; }
+.subjects-item-icon {
+  width: 38px; height: 38px;
+  background: #e8f5ee; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.subjects-item h4 { font-size: 0.9rem; font-weight: 600; }
+.subjects-item p { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.subjects-item-arrow {
+  color: var(--muted);
+  font-size: 1.2rem;
+}
 
-  /* ─── PROGRESS DOTS ─── */
-  .progress-dots {
-    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 20;
-  }
-  .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    transition: background 0.4s, transform 0.3s;
-  }
-  .dot.active { background: var(--rose); transform: scale(1.35); }
+/* Upload box */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 32px;
+}
+.upload-zone:hover { border-color: var(--accent); background: #f0faf4; }
+.upload-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.upload-zone h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.upload-zone p { font-size: 0.83rem; color: var(--muted); }
+.upload-btn {
+  display: inline-block;
+  margin-top: 16px;
+  background: var(--accent);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+.upload-btn:hover { background: #1b4332; }
 
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 480px) {
-    .btn-row { flex-direction: column; align-items: center; }
-    .btn-yes, .btn-no { width: 220px; }
-  }
+.page-section-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px clamp(24px, 5vw, 72px);
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+footer strong { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-photo { min-height: 350px; order: -1; }
+  .about-grid { grid-template-columns: 1fr; }
+  .avatar-ring { width: 150px; height: 150px; }
+  .avatar-inner { width: 130px; height: 130px; font-size: 3.5rem; }
+}
+
+@media (max-width: 480px) {
+  .subject-grid { grid-template-columns: 1fr; }
+  .sem-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Animation */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(16px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.page.active .page-header,
+.page.active .grid-page,
+.page.active .hero {
+  animation: fadeUp 0.35s ease;
+}
 </style>
 </head>
 <body>
 
-<canvas id="stars-canvas"></canvas>
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Edu<span>Nest</span></div>
+  <ul class="nav-links">
+    <li class="nav-item">
+      <button class="nav-link" onclick="showPage('home')">Home</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" onclick="toggleNav(this)">+2 Class <span class="arrow"></span></button>
+      <div class="dropdown">
+        <div class="dropdown-item" onclick="showPage('class11');closeAllNav()">Class 11</div>
+        <div class="dropdown-item" onclick="showPage('class12');closeAllNav()">Class 12</div>
+      </div>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" onclick="toggleNav(this)">IOE Engineering <span class="arrow"></span></button>
+      <div class="dropdown">
+        <div class="dropdown-item sub-dropdown" onclick="this.classList.toggle('open');event.stopPropagation()">
+          Civil Engineering <span class="sub-arrow"></span>
+          <div class="sub-dropdown-menu">
+            <div class="dropdown-item" onclick="showSemPage('civil-sem');closeAllNav()">View Semesters</div>
+          </div>
+        </div>
+        <div class="dropdown-item" onclick="showSemPage('computer-sem');closeAllNav()">Computer Engineering</div>
+        <div class="dropdown-item" onclick="showSemPage('electronics-sem');closeAllNav()">Electronics Engineering</div>
+        <div class="dropdown-item" onclick="showSemPage('electrical-sem');closeAllNav()">Electrical Engineering</div>
+      </div>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" onclick="showSemPage('csit-sem');closeAllNav()">BSc CSIT</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" onclick="showSemPage('bca-sem');closeAllNav()">BCA</button>
+    </li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-<!-- Progress dots -->
-<div class="progress-dots" id="dots">
-  <div class="dot active" id="dot0"></div>
-  <div class="dot" id="dot1"></div>
-  <div class="dot" id="dot2"></div>
-  <div class="dot" id="dot3"></div>
-</div>
-
-<!-- ── SCREEN 1: LANDING ── -->
-<div class="screen active" id="s1">
-  <div class="envelope-scene" onclick="goTo(2)" tabindex="0" role="button" aria-label="Open the letter">
-    <svg class="petals-ring" viewBox="0 0 200 200">
-      <!-- 8 petals rotating -->
-    </svg>
-    <div class="envelope">
-      <div class="env-body"></div>
-      <div class="env-line-left"></div>
-      <div class="env-line-right"></div>
-      <div class="env-bottom"></div>
-      <div class="env-flap"></div>
-      <div class="heart-peek">💌</div>
-      <div class="env-shadow"></div>
-    </div>
-    <p class="tap-hint">tap to open</p>
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-item">
+    <div class="mobile-nav-link" onclick="showPage('home');closeMobileNav()">Home</div>
   </div>
-  <h1 class="s1-title">A message<br>just for you</h1>
-  <p class="s1-sub">Something I've been meaning to say<br>for a long, long time…</p>
-</div>
-
-<!-- ── SCREEN 2: STORY ── -->
-<div class="screen hidden" id="s2">
-  <h2 class="story-header">Our little story</h2>
-  <p class="story-header-sub">a few moments I'll never forget</p>
-  <div class="cards-wrap" id="cards-wrap">
-    <div class="memory-card" id="c0">
-      <div class="card-icon">☕</div>
-      <div class="card-label">The beginning</div>
-      <div class="card-text">The day I first saw your smile, something shifted quietly inside me — like a door opening to a room I didn't know existed.</div>
-    </div>
-    <div class="memory-card" id="c1">
-      <div class="card-icon">🌙</div>
-      <div class="card-label">Late nights</div>
-      <div class="card-text">Talking until the world went still. I realised I never wanted those conversations to end — or for you to be anywhere but near me.</div>
-    </div>
-    <div class="memory-card" id="c2">
-      <div class="card-icon">🌸</div>
-      <div class="card-label">Every little thing</div>
-      <div class="card-text">Your laugh. The way you light up when you talk about the things you love. Your quiet kindness that makes everyone feel seen.</div>
-    </div>
-    <div class="memory-card" id="c3">
-      <div class="card-icon">✨</div>
-      <div class="card-label">Right now</div>
-      <div class="card-text">And here we are. My heart is so full because of you. There's only one thing left I've been wanting to ask…</div>
+  <div class="mobile-nav-item">
+    <div class="mobile-nav-link" onclick="toggleMobileSub('m-plus2')">+2 Class <span>▾</span></div>
+    <div class="mobile-nav-sub" id="m-plus2">
+      <div class="mobile-nav-sub-item" onclick="showPage('class11');closeMobileNav()">Class 11</div>
+      <div class="mobile-nav-sub-item" onclick="showPage('class12');closeMobileNav()">Class 12</div>
     </div>
   </div>
-  <button class="next-btn" onclick="goTo(3)">I'm ready →</button>
-</div>
-
-<!-- ── SCREEN 3: QUESTION ── -->
-<div class="screen hidden" id="s3">
-  <div class="orbit">
-    <div class="orbit-ring"></div>
-    <div class="orbit-ring-2"></div>
-    <div class="center-heart">💗</div>
+  <div class="mobile-nav-item">
+    <div class="mobile-nav-link" onclick="toggleMobileSub('m-ioe')">IOE Engineering <span>▾</span></div>
+    <div class="mobile-nav-sub" id="m-ioe">
+      <div class="mobile-nav-sub-item" onclick="showSemPage('civil-sem');closeMobileNav()">Civil Engineering</div>
+      <div class="mobile-nav-sub-item" onclick="showSemPage('computer-sem');closeMobileNav()">Computer Engineering</div>
+      <div class="mobile-nav-sub-item" onclick="showSemPage('electronics-sem');closeMobileNav()">Electronics Engineering</div>
+      <div class="mobile-nav-sub-item" onclick="showSemPage('electrical-sem');closeMobileNav()">Electrical Engineering</div>
+    </div>
   </div>
-  <h2 class="q-title">Will you be<br>my girlfriend?</h2>
-  <p class="q-sub">You've made every single day warmer just by being in it. I want to keep building this story — together, with you.</p>
-  <div class="btn-row">
-    <button class="btn-yes" onclick="sayYes()">Yes, always! 💕</button>
-    <button class="btn-no" id="noBtn" onmouseenter="runAway()" onclick="runAway()">Maybe later…</button>
+  <div class="mobile-nav-item">
+    <div class="mobile-nav-link" onclick="showSemPage('csit-sem');closeMobileNav()">BSc CSIT</div>
+  </div>
+  <div class="mobile-nav-item">
+    <div class="mobile-nav-link" onclick="showSemPage('bca-sem');closeMobileNav()">BCA</div>
   </div>
 </div>
 
-<!-- ── SCREEN 4: YES ── -->
-<div class="screen hidden" id="s4">
-  <div class="yes-ring-wrap">
-    <div class="ring-glow"></div>
-    <div class="ring-emoji">💍</div>
+<!-- ══════════════════════════════════ -->
+<!-- HOME PAGE -->
+<!-- ══════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-badge">Reading Materials Platform</div>
+      <h1 class="hero-title">Learn<br><em>Without</em><br>Limits.</h1>
+      <p class="hero-sub">EduNest by Pratik Timsina — a curated hub of study materials for +2, IOE Engineering, BSc CSIT, and BCA students across Nepal.</p>
+      <div class="hero-cards">
+        <div class="hero-card" onclick="showPage('class11')">📗 Class 11</div>
+        <div class="hero-card" onclick="showPage('class12')">📘 Class 12</div>
+        <div class="hero-card" onclick="showPage('ioe')">🏗 IOE Engineering</div>
+        <div class="hero-card" onclick="showSemPage('csit-sem')">💻 BSc CSIT</div>
+        <div class="hero-card" onclick="showSemPage('bca-sem')">🎓 BCA</div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar-inner">🎓</div>
+        </div>
+        <div class="avatar-name">Pratik Timsina</div>
+        <div class="avatar-sub">Electronics · Communication · Information Engineering</div>
+        <div class="info-chips">
+          <div class="chip"><span class="chip-label">DOB</span> December 13, 2006</div>
+          <div class="chip"><span class="chip-label">From</span> Jhapa, Nepal</div>
+          <div class="chip"><span class="chip-label">Lives</span> Lalitpur, Nepal</div>
+          <div class="chip"><span class="chip-label">Email</span> info@pratiktimsina.com.np</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="yes-title">She said yes!</div>
-  <div class="divider"></div>
-  <p class="yes-sub">You've made me the happiest person alive. This is only the beginning of our beautiful adventure together. I love you.</p>
-  <p class="forever-text">forever & always</p>
+
+  <div class="section">
+    <div class="section-title">About <span>Me</span></div>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Who I Am</h3>
+        <p>I am an aspiring engineer passionate about electronics, communication systems, and information engineering. My academic path reflects dedication and consistency, from completing SEE and SLC at Shree Adarsha Secondary School to joining the National College of Engineering.</p>
+        <br>
+        <p>Beyond academics, I enjoy programming (especially in C), structured problem-solving, and creating clear, visually organized presentations. I am also building my personal blog to share knowledge, projects, and reflections.</p>
+        <br>
+        <p>Music, creative exploration, and digital tools balance my technical pursuits, keeping me inspired and versatile.</p>
+      </div>
+      <div class="about-card">
+        <h3>Education Journey</h3>
+        <div class="edu-item">
+          <div class="edu-year">2079 B.S.</div>
+          <div style="font-size:0.88rem;font-weight:600;">Secondary Education Examination (SEE)</div>
+          <div class="edu-school">Shree Adarsha Secondary School, Buddhashanti-2, Jhapa</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">2082 B.S.</div>
+          <div style="font-size:0.88rem;font-weight:600;">School Leaving Certificate (SLC)</div>
+          <div class="edu-school">Shree Adarsha Secondary School, Buddhashanti-2, Jhapa</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">From Nov 19, 2025</div>
+          <div style="font-size:0.88rem;font-weight:600;">Undergraduate — Electronics, Communication & Information Engineering</div>
+          <div class="edu-school">National College of Engineering, Nepal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong> &nbsp;·&nbsp; info@pratiktimsina.com.np</footer>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- CLASS 11 -->
+<!-- ══════════════════════════════════ -->
+<div class="page" id="page-class11">
+  <div class="page-header">
+    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
+    <h1>Class 11 — +2</h1>
+    <p>NEB curriculum study materials for Grade 11</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">Subjects</div>
+    <div class="subjects-list" id="class11-subjects"></div>
+    <div class="upload-zone" onclick="triggerUpload()">
+      <div class="upload-icon">📤</div>
+      <h3>Upload Study Materials</h3>
+      <p>PDF, DOCX, or image files accepted</p>
+      <button class="upload-btn">Choose File</button>
+      <input type="file" id="fileInput" style="display:none" accept=".pdf,.docx,.jpg,.png" onchange="handleUpload(event)">
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+</div>
+
+<!-- CLASS 12 -->
+<div class="page" id="page-class12">
+  <div class="page-header">
+    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
+    <h1>Class 12 — +2</h1>
+    <p>NEB curriculum study materials for Grade 12</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">Subjects</div>
+    <div class="subjects-list" id="class12-subjects"></div>
+    <div class="upload-zone" onclick="triggerUpload()">
+      <div class="upload-icon">📤</div>
+      <h3>Upload Study Materials</h3>
+      <p>PDF, DOCX, or image files accepted</p>
+      <button class="upload-btn">Choose File</button>
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+</div>
+
+<!-- IOE FACULTY PICKER -->
+<div class="page" id="page-ioe">
+  <div class="page-header">
+    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
+    <h1>IOE Engineering</h1>
+    <p>Institute of Engineering — Tribhuvan University</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">Select Your Faculty</div>
+    <div class="subject-grid">
+      <div class="subject-card" onclick="showSemPage('civil-sem')">
+        <div class="subject-icon">🏗</div>
+        <h3>Civil Engineering</h3>
+        <p>8 semesters · TU affiliated</p>
+      </div>
+      <div class="subject-card" onclick="showSemPage('computer-sem')">
+        <div class="subject-icon">💻</div>
+        <h3>Computer Engineering</h3>
+        <p>8 semesters · TU affiliated</p>
+      </div>
+      <div class="subject-card" onclick="showSemPage('electronics-sem')">
+        <div class="subject-icon">📡</div>
+        <h3>Electronics Engineering</h3>
+        <p>8 semesters · TU affiliated</p>
+      </div>
+      <div class="subject-card" onclick="showSemPage('electrical-sem')">
+        <div class="subject-icon">⚡</div>
+        <h3>Electrical Engineering</h3>
+        <p>8 semesters · TU affiliated</p>
+      </div>
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+</div>
+
+<!-- DYNAMIC SEMESTER PAGE (reused) -->
+<div class="page" id="page-semesters">
+  <div class="page-header">
+    <div class="page-header-back" id="sem-back-btn">Back</div>
+    <h1 id="sem-page-title">Semesters</h1>
+    <p id="sem-page-sub">Select a semester to view materials</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">Choose Semester</div>
+    <div class="sem-grid" id="sem-grid-container"></div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+</div>
+
+<!-- DYNAMIC SUBJECTS PAGE (after semester click) -->
+<div class="page" id="page-subjects">
+  <div class="page-header">
+    <div class="page-header-back" id="subj-back-btn">Back</div>
+    <h1 id="subj-page-title">Semester Subjects</h1>
+    <p id="subj-page-sub">Upload or browse study materials</p>
+  </div>
+  <div class="grid-page">
+    <div class="page-section-label">Subjects</div>
+    <div class="subjects-list" id="subj-list-container"></div>
+    <div class="upload-zone" onclick="triggerUpload()">
+      <div class="upload-icon">📤</div>
+      <h3>Upload Study Materials</h3>
+      <p>PDF, DOCX, or image files accepted</p>
+      <button class="upload-btn">Choose File</button>
+    </div>
+  </div>
+  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
 </div>
 
 <script>
-// ─── STARS ────────────────────────────────
-const canvas = document.getElementById('stars-canvas');
-const ctx = canvas.getContext('2d');
-let stars = [], W, H;
+// ── DATA ──
+const DATA = {
+  class11: {
+    subjects: ['Mathematics','Physics','Chemistry','English','Computer Science','Biology','Nepali','Economics','Account','Business Studies']
+  },
+  class12: {
+    subjects: ['Mathematics','Physics','Chemistry','English','Computer Science','Biology','Nepali','Economics','Account','Business Studies']
+  },
+  'civil-sem': {
+    title: 'Civil Engineering',
+    parent: 'ioe',
+    parentLabel: 'IOE Engineering',
+    semesters: 8,
+    subjects: {
+      1: ['Engineering Mathematics I','Engineering Physics','Engineering Chemistry','Engineering Drawing I','Computer Programming'],
+      2: ['Engineering Mathematics II','Object Oriented Programming','Engineering Drawing II','Engineering Materials','Probability & Statistics'],
+      3: ['Surveying I','Fluid Mechanics','Strength of Materials','Geology','Engineering Math III'],
+      4: ['Surveying II','Hydraulics','Theory of Structures','Building Technology','Numerical Methods'],
+      5: ['Foundation Engineering','Transportation Engineering I','Water Supply Engineering','Estimating & Costing','Elective I'],
+      6: ['Design of Steel Structures','Transportation Engineering II','Sanitary Engineering','Hydrology','Elective II'],
+      7: ['Dam Engineering','Construction Management','Irrigation Engineering','Bridge Engineering','Elective III'],
+      8: ['Project Work','Engineering Professional Practice','Earthquake Engineering','Elective IV','Elective V']
+    }
+  },
+  'computer-sem': {
+    title: 'Computer Engineering',
+    parent: 'ioe',
+    parentLabel: 'IOE Engineering',
+    semesters: 8,
+    subjects: {
+      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop Technology'],
+      2: ['Engineering Math II','Object Oriented Programming','Electronics Devices','Data Structure & Algorithms','Discrete Mathematics'],
+      3: ['Engineering Math III','Digital Logic','Computer Organization','Operating Systems','Probability & Statistics'],
+      4: ['Microprocessors','Computer Networks','Database Management','Software Engineering','Numerical Methods'],
+      5: ['Artificial Intelligence','Distributed Systems','Computer Graphics','Theory of Computation','Elective I'],
+      6: ['Embedded Systems','Compiler Design','Information Security','Digital Signal Processing','Elective II'],
+      7: ['Machine Learning','Cloud Computing','Mobile Application','Project I','Elective III'],
+      8: ['Project II','Engineering Professional Practice','Elective IV','Elective V','Thesis']
+    }
+  },
+  'electronics-sem': {
+    title: 'Electronics Engineering',
+    parent: 'ioe',
+    parentLabel: 'IOE Engineering',
+    semesters: 8,
+    subjects: {
+      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop'],
+      2: ['Engineering Math II','Electronics Devices','Digital Logic','Analog Electronics','Network Theory'],
+      3: ['Engineering Math III','Signals & Systems','Microprocessors','Communication Systems I','Probability & Statistics'],
+      4: ['Digital Communications','Electromagnetic Fields','VLSI Design','Control Systems','Numerical Methods'],
+      5: ['Communication Systems II','Antenna & Propagation','Digital Signal Processing','Microwave Engineering','Elective I'],
+      6: ['Information Theory','Optical Communication','Embedded Systems','Satellite Communications','Elective II'],
+      7: ['Mobile Communication','Advanced DSP','Project I','Research Methodology','Elective III'],
+      8: ['Project II','Professional Practice','Elective IV','Elective V','Thesis']
+    }
+  },
+  'electrical-sem': {
+    title: 'Electrical Engineering',
+    parent: 'ioe',
+    parentLabel: 'IOE Engineering',
+    semesters: 8,
+    subjects: {
+      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop'],
+      2: ['Engineering Math II','Circuit Theory','Electrical Machines I','Electronics Devices','Digital Logic'],
+      3: ['Engineering Math III','Electrical Machines II','Power Systems I','Signals & Systems','Numerical Methods'],
+      4: ['Electrical Machines III','Power Systems II','Control Systems','Power Electronics','Microprocessors'],
+      5: ['Power Systems III','High Voltage Engineering','Switchgear & Protection','Energy Management','Elective I'],
+      6: ['Power System Stability','Electric Drives','Power Quality','Renewable Energy','Elective II'],
+      7: ['Smart Grid','Project I','Research Methodology','Elective III','Elective IV'],
+      8: ['Project II','Professional Practice','Elective V','Elective VI','Thesis']
+    }
+  },
+  'csit-sem': {
+    title: 'BSc CSIT',
+    parent: 'home',
+    parentLabel: 'Home',
+    semesters: 8,
+    subjects: {
+      1: ['Computer Fundamentals','Digital Logic','Mathematics I','English I','Physics'],
+      2: ['Programming in C','Data Structures','Mathematics II','English II','Statistics'],
+      3: ['Object Oriented Programming','Database Management','Discrete Structures','Computer Architecture','Numerical Methods'],
+      4: ['Operating System','Computer Networks','Software Engineering','Theory of Computation','Probability & Statistics'],
+      5: ['Java Programming','Web Technology','Artificial Intelligence','Simulation & Modeling','Elective I'],
+      6: ['Compiler Design','Cryptography','Mobile Computing','Data Mining','Elective II'],
+      7: ['Machine Learning','Cloud Computing','Project I','Internship','Elective III'],
+      8: ['Project II','Entrepreneurship','Research Methods','Elective IV','Elective V']
+    }
+  },
+  'bca-sem': {
+    title: 'BCA',
+    parent: 'home',
+    parentLabel: 'Home',
+    semesters: 8,
+    subjects: {
+      1: ['Computer Fundamentals','Mathematics I','English I','Digital Logic','Principles of Management'],
+      2: ['Programming in C','Mathematics II','English II','Electronics & Computer Hardware','Financial Accounting'],
+      3: ['Data Structures','Object Oriented Programming','Database Management','Computer Networks','Statistics'],
+      4: ['Web Technology','System Analysis & Design','Operating System','Economics','Elective I'],
+      5: ['Java Programming','Software Engineering','Artificial Intelligence','Project Management','Elective II'],
+      6: ['Multimedia Technology','E-commerce','Mobile Application','Internship','Elective III'],
+      7: ['Project I','Advanced Web Tech','Information Security','Elective IV','Elective V'],
+      8: ['Project II','Entrepreneurship','Research Methods','Elective VI','Elective VII']
+    }
+  }
+};
 
-function initStars() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  stars = Array.from({length: 180}, () => ({
-    x: Math.random() * W, y: Math.random() * H,
-    r: Math.random() * 1.4 + 0.2,
-    a: Math.random() * Math.PI * 2,
-    speed: Math.random() * 0.007 + 0.002
-  }));
+const CLASS_SUBJECTS = {
+  class11: ['📐 Mathematics','🔭 Physics','⚗️ Chemistry','📖 English','💾 Computer Science','🌿 Biology','📝 Nepali','📊 Economics','🧾 Account','🏢 Business Studies'],
+  class12: ['📐 Mathematics','🔭 Physics','⚗️ Chemistry','📖 English','💾 Computer Science','🌿 Biology','📝 Nepali','📊 Economics','🧾 Account','🏢 Business Studies']
+};
+
+let currentSemContext = null;
+let currentSemBack = 'home';
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+  // populate static pages
+  if (id === 'class11') populateClassSubjects('class11');
+  if (id === 'class12') populateClassSubjects('class12');
 }
 
-function drawStars() {
-  ctx.clearRect(0, 0, W, H);
-  stars.forEach(s => {
-    s.a += s.speed;
-    const alpha = (Math.sin(s.a) + 1) / 2;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,200,228,${alpha * 0.65})`;
-    ctx.fill();
+function showSemPage(key) {
+  const d = DATA[key];
+  if (!d) return;
+  currentSemContext = key;
+  currentSemBack = d.parent;
+
+  document.getElementById('sem-page-title').textContent = d.title + ' — Semesters';
+  document.getElementById('sem-page-sub').textContent = 'Select a semester to view study materials';
+  document.getElementById('sem-back-btn').textContent = '← Back to ' + d.parentLabel;
+  document.getElementById('sem-back-btn').onclick = () => showPage(d.parent);
+
+  const grid = document.getElementById('sem-grid-container');
+  grid.innerHTML = '';
+  for (let i = 1; i <= d.semesters; i++) {
+    const card = document.createElement('div');
+    card.className = 'sem-card';
+    card.innerHTML = `<div class="sem-num">${i}</div><div class="sem-label">Semester ${i}</div>`;
+    card.onclick = () => showSubjectsPage(key, i);
+    grid.appendChild(card);
+  }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-semesters').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showSubjectsPage(key, sem) {
+  const d = DATA[key];
+  document.getElementById('subj-page-title').textContent = d.title + ' — Semester ' + sem;
+  document.getElementById('subj-page-sub').textContent = 'Browse or upload study materials for Semester ' + sem;
+  document.getElementById('subj-back-btn').textContent = '← Back to Semesters';
+  document.getElementById('subj-back-btn').onclick = () => showSemPage(key);
+
+  const subjects = d.subjects[sem] || [];
+  const list = document.getElementById('subj-list-container');
+  list.innerHTML = '';
+  subjects.forEach(subj => {
+    const div = document.createElement('div');
+    div.className = 'subjects-item';
+    div.innerHTML = `
+      <div class="subjects-item-left">
+        <div class="subjects-item-icon">📄</div>
+        <div>
+          <h4>${subj}</h4>
+          <p>Notes · Past Papers · Reference Books</p>
+        </div>
+      </div>
+      <div class="subjects-item-arrow">›</div>
+    `;
+    list.appendChild(div);
   });
-  requestAnimationFrame(drawStars);
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-subjects').classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-initStars(); drawStars();
-window.addEventListener('resize', initStars);
-
-// ─── SCREEN MANAGER ───────────────────────
-let currentScreen = 1;
-const screenMap = { 1: 's1', 2: 's2', 3: 's3', 4: 's4' };
-
-function goTo(n) {
-  const prev = document.getElementById(screenMap[currentScreen]);
-  const next = document.getElementById(screenMap[n]);
-  prev.classList.remove('active');
-  setTimeout(() => {
-    prev.classList.add('hidden');
-    next.classList.remove('hidden');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => next.classList.add('active'));
-    });
-  }, 400);
-  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === n-1));
-  currentScreen = n;
-  if (n === 2) revealCards();
-  if (n === 3) spawnHearts(4);
-}
-
-// ─── CARD REVEAL ──────────────────────────
-function revealCards() {
-  ['c0','c1','c2','c3'].forEach((id, i) => {
-    setTimeout(() => {
-      document.getElementById(id).classList.add('reveal');
-    }, 200 + i * 220);
+function populateClassSubjects(cls) {
+  const list = document.getElementById(cls + '-subjects');
+  if (!list || list.children.length > 0) return;
+  const subjects = CLASS_SUBJECTS[cls];
+  subjects.forEach(subj => {
+    const div = document.createElement('div');
+    div.className = 'subjects-item';
+    div.innerHTML = `
+      <div class="subjects-item-left">
+        <div class="subjects-item-icon">${subj.split(' ')[0]}</div>
+        <div>
+          <h4>${subj.replace(/^[^\s]+ /, '')}</h4>
+          <p>Notes · Past Papers · Reference Books</p>
+        </div>
+      </div>
+      <div class="subjects-item-arrow">›</div>
+    `;
+    list.appendChild(div);
   });
 }
 
-// ─── NO BUTTON ────────────────────────────
-let noHits = 0;
-function runAway() {
-  noHits++;
-  const btn = document.getElementById('noBtn');
-  const vw = window.innerWidth, vh = window.innerHeight;
-  const bw = btn.offsetWidth + 20, bh = btn.offsetHeight + 20;
-  btn.style.position = 'fixed';
-  btn.style.left = Math.min(vw - bw, Math.max(8, Math.random() * (vw - bw))) + 'px';
-  btn.style.top  = Math.min(vh - bh, Math.max(8, Math.random() * (vh - bh))) + 'px';
-  btn.style.transition = 'left 0.25s ease, top 0.25s ease';
-  if (noHits >= 3) {
-    btn.textContent = '…okay, YES! 💕';
-    btn.style.color = '#f7a8be';
-    btn.onclick = sayYes;
-    btn.onmouseenter = null;
-  }
+// ── DESKTOP DROPDOWN (click-stable) ──
+function toggleNav(btn) {
+  const item = btn.closest('.nav-item');
+  const isOpen = item.classList.contains('open');
+  closeAllNav();
+  if (!isOpen) item.classList.add('open');
 }
-
-// ─── SAY YES ──────────────────────────────
-function sayYes() {
-  goTo(4);
-  launchConfetti();
-  const hInt = setInterval(() => spawnHearts(6), 700);
-  setTimeout(() => clearInterval(hInt), 8000);
+function toggleSub(el) {
+  el.stopPropagation && el.stopPropagation();
+  const item = el.closest ? el : el.target.closest('.sub-dropdown');
+  document.querySelectorAll('.sub-dropdown.open').forEach(s => { if(s !== item) s.classList.remove('open'); });
+  item.classList.toggle('open');
+  event.stopPropagation();
 }
-
-// ─── FLOATING HEARTS ──────────────────────
-const HEARTS = ['💗','💕','💖','💝','🌸','✨','💓'];
-function spawnHearts(count) {
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const h = document.createElement('div');
-      h.className = 'float-heart';
-      h.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-      h.style.setProperty('--rot', (Math.random()*30 - 15) + 'deg');
-      h.style.left = (Math.random() * 88 + 6) + 'vw';
-      h.style.bottom = (Math.random() * 15 + 5) + 'vh';
-      document.body.appendChild(h);
-      setTimeout(() => h.remove(), 3100);
-    }, i * 120);
-  }
+function closeAllNav() {
+  document.querySelectorAll('.nav-item.open').forEach(i => i.classList.remove('open'));
+  document.querySelectorAll('.sub-dropdown.open').forEach(i => i.classList.remove('open'));
 }
-
-// ─── CONFETTI ─────────────────────────────
-const CONF_COLORS = ['#e8567a','#f7a8be','#fff','#f0c080','#fce4ed','#c23060','#ffd9e8'];
-function launchConfetti() {
-  for (let i = 0; i < 100; i++) {
-    const p = document.createElement('div');
-    p.className = 'conf-piece';
-    const size = Math.random() * 10 + 5;
-    p.style.setProperty('--w',   size + 'px');
-    p.style.setProperty('--h',   (Math.random() > 0.5 ? size : size * 2.2) + 'px');
-    p.style.setProperty('--c',   CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)]);
-    p.style.setProperty('--r',   (Math.random() > 0.5 ? '50%' : '2px'));
-    p.style.setProperty('--dur', (Math.random() * 1.8 + 1.6) + 's');
-    p.style.setProperty('--delay', (Math.random() * 1.2) + 's');
-    p.style.setProperty('--dx',  (Math.random() * 100 - 50) + 'px');
-    p.style.left = (Math.random() * 100) + 'vw';
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 4500);
-  }
-  setTimeout(launchConfetti, 3800);
-}
-
-// ─── SPARKLE CURSOR TRAIL ─────────────────
-document.addEventListener('mousemove', (e) => {
-  if (Math.random() > 0.35) return;
-  const d = document.createElement('div');
-  d.className = 'sparkle-dot';
-  d.style.left = (e.clientX - 3) + 'px';
-  d.style.top  = (e.clientY - 3) + 'px';
-  d.style.background = HEARTS.includes('✨') ? '#f0c080' : '#f7a8be';
-  d.style.background = Math.random() > 0.5 ? '#f7a8be' : '#f0c080';
-  document.body.appendChild(d);
-  setTimeout(() => d.remove(), 720);
+// Close on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.nav-item')) closeAllNav();
 });
 
-// Keyboard accessibility
-document.querySelector('.envelope-scene').addEventListener('keypress', e => {
-  if (e.key === 'Enter' || e.key === ' ') goTo(2);
-});
+// ── MOBILE NAV ──
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+}
+function toggleMobileSub(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── UPLOAD ──
+function triggerUpload() {
+  document.getElementById('fileInput') && document.getElementById('fileInput').click();
+}
+function handleUpload(e) {
+  const f = e.target.files[0];
+  if (f) alert('File "' + f.name + '" selected for upload!\n(Backend integration required to store files.)');
+}
 </script>
 </body>
 </html>
