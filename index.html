@@ -1,1110 +1,650 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduNest — by Pratik Timsina</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>मिति · BS ⇌ AD Date Converter &amp; Age Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f7f4ef;
-  --surface: #ffffff;
-  --text: #1a1814;
-  --muted: #6b6560;
-  --accent: #2d6a4f;
-  --accent2: #b5451b;
-  --border: #e2ddd8;
-  --nav-h: 64px;
-}
+  :root{
+    --bg-top:#1B2A4A;
+    --bg-bot:#0F1C33;
+    --paper:#F7ECD9;
+    --paper-2:#EEDFC2;
+    --ink:#2B1B0E;
+    --ink-soft:#6B5A43;
+    --marigold:#E8A23D;
+    --marigold-deep:#C97F1F;
+    --vermilion:#C0392B;
+    --sky:#3E7CB1;
+    --leaf:#4C8C4A;
+    --cream:#F7ECD9;
+    --radius:14px;
+    --shadow: 0 18px 40px -18px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--paper);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #24365c 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg-top), var(--bg-bot) 70%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px 60px;overflow-x:hidden;}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+  /* ---------- Header / signature pagoda ---------- */
+  header{padding:48px 20px 28px;text-align:center;}
+  .pagoda{width:120px;height:92px;margin:0 auto 6px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));}
+  header h1{
+    font-family:'Tiro Devanagari Hindi', serif;
+    font-size:clamp(2.1rem, 5vw, 3.2rem);
+    margin:6px 0 2px;
+    letter-spacing:.02em;
+    color:var(--paper);
+  }
+  header p.sub{
+    margin:0 auto;
+    max-width:520px;
+    color:#B9C4DA;
+    font-size:.98rem;
+    line-height:1.5;
+  }
 
-html { scroll-behavior: smooth; }
+  /* prayer-flag bunting divider */
+  .bunting{display:flex;justify-content:center;gap:22px;align-items:flex-start;margin:26px 0 4px;position:relative;}
+  .bunting::before{
+    content:"";position:absolute;top:5px;left:8%;right:8%;height:1px;
+    background:linear-gradient(90deg, transparent, #6b7ea3, transparent);
+  }
+  .bunting span{
+    width:13px;height:16px;border-radius:0 0 3px 3px;display:inline-block;
+    transform:translateY(-2px);
+    box-shadow:0 6px 10px -4px rgba(0,0,0,.5);
+  }
+  .bunting span:nth-child(1){background:var(--sky);}
+  .bunting span:nth-child(2){background:var(--paper);}
+  .bunting span:nth-child(3){background:var(--vermilion);}
+  .bunting span:nth-child(4){background:var(--leaf);}
+  .bunting span:nth-child(5){background:var(--marigold);}
+  .bunting span:nth-child(6){background:var(--sky);}
+  .bunting span:nth-child(7){background:var(--paper);}
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;justify-content:center;gap:10px;margin:34px 0 8px;flex-wrap:wrap;
+  }
+  nav.tabs button{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;font-size:.95rem;
+    padding:12px 22px;
+    border-radius:999px;
+    border:1px solid rgba(247,236,217,.25);
+    background:rgba(255,255,255,.04);
+    color:var(--paper);
+    cursor:pointer;
+    transition:background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+  }
+  nav.tabs button:hover{transform:translateY(-1px);border-color:rgba(247,236,217,.5);}
+  nav.tabs button.active{
+    background:linear-gradient(135deg, var(--marigold), var(--vermilion));
+    border-color:transparent;
+    color:#241708;
+    box-shadow:0 10px 22px -10px rgba(232,162,61,.6);
+  }
 
-/* ── NAV ── */
-nav {
-  position: fixed; top:0; left:0; right:0; z-index:1000;
-  height: var(--nav-h);
-  background: rgba(247,244,239,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(16px, 4vw, 56px);
-}
+  /* ---------- Pages ---------- */
+  .page{display:none;animation:fadeUp .45s ease both;}
+  .page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-.nav-logo {
-  font-family: 'Playfair Display', serif;
-  font-weight: 900;
-  font-size: 1.4rem;
-  color: var(--accent);
-  cursor: pointer;
-  letter-spacing: -0.5px;
-}
-.nav-logo span { color: var(--accent2); }
+  .grid2{
+    display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:30px;position:relative;
+  }
+  @media (max-width:760px){ .grid2{grid-template-columns:1fr;} }
 
-.nav-links {
-  display: flex; align-items: center; gap: 4px;
-  list-style: none;
-}
+  .card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:var(--radius);
+    padding:26px 24px 24px;
+    box-shadow:var(--shadow);
+    position:relative;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:22px;right:22px;height:6px;
+    background:linear-gradient(90deg, var(--sky), var(--marigold), var(--vermilion));
+    border-radius:0 0 6px 6px;
+  }
+  .card h2{
+    font-family:'Tiro Devanagari Hindi', serif;
+    font-size:1.4rem;margin:8px 0 2px;color:var(--ink);
+  }
+  .card p.hint{margin:0 0 18px;color:var(--ink-soft);font-size:.86rem;}
 
-.nav-item { position: relative; }
+  .field-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .field{flex:1;min-width:90px;display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;}
+  select, input[type="date"]{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16px;font-weight:500;
+    padding:10px 10px;
+    border-radius:9px;
+    border:1.5px solid #DDC79E;
+    background:#FFFBF3;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease;
+    max-width:100%;
+    min-width:0;
+  }
+  select:focus, input[type="date"]:focus{border-color:var(--marigold-deep);}
 
-.nav-link {
-  display: flex; align-items: center; gap: 4px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-  border: none; background: none;
-}
-.nav-link:hover { background: var(--border); color: var(--accent); }
+  .btn{
+    appearance:none;border:none;cursor:pointer;
+    font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:.95rem;
+    padding:12px 20px;border-radius:9px;
+    background:linear-gradient(135deg, var(--marigold), var(--marigold-deep));
+    color:#2B1806;
+    width:100%;
+    margin-top:6px;
+    box-shadow:0 10px 18px -10px rgba(201,127,31,.7);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 14px 22px -10px rgba(201,127,31,.8);}
+  .btn:active{transform:translateY(0);}
+  .btn.alt{background:linear-gradient(135deg, var(--sky), #2c5c85);color:#F4F8FC;box-shadow:0 10px 18px -10px rgba(62,124,177,.7);}
 
-.nav-link .arrow {
-  width: 12px; height: 12px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg) translateY(-2px);
-  transition: transform 0.2s;
-  display: inline-block;
-}
-.nav-item.open .arrow { transform: rotate(-135deg) translateY(-2px); }
+  .result{
+    margin-top:18px;padding:16px 16px;border-radius:10px;
+    background:var(--paper-2);border:1px dashed #C9AE79;
+    display:none;
+  }
+  .result.show{display:block;animation:fadeUp .3s ease both;}
+  .result .big{font-family:'Tiro Devanagari Hindi', serif;font-size:1.35rem;color:var(--vermilion);margin:0 0 4px;}
+  .result .small{font-size:.85rem;color:var(--ink-soft);margin:0;}
+  .result .np{font-size:.95rem;color:var(--ink);margin:6px 0 0;}
+  .error{color:var(--vermilion);font-size:.85rem;margin-top:10px;display:none;}
+  .error.show{display:block;}
 
-.dropdown {
-  display: none;
-  position: absolute; top: calc(100% + 6px); left: 0;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  min-width: 200px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  overflow: hidden;
-  z-index: 999;
-}
-.nav-item.open > .dropdown { display: block; }
+  .swap-note{
+    text-align:center;color:#93A2C0;font-size:.82rem;margin-top:10px;
+  }
 
-.dropdown-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px;
-  font-size: 0.87rem;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.dropdown-item:hover { background: #f0ede8; color: var(--accent); }
-.dropdown-item .sub-arrow {
-  width: 10px; height: 10px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(-45deg);
-}
+  /* ---------- Age page ---------- */
+  .age-card{max-width:640px;margin:30px auto 0;}
+  .toggle-cal{display:flex;gap:8px;margin-bottom:16px;}
+  .toggle-cal button{
+    flex:1;padding:9px;border-radius:8px;border:1.5px solid #DDC79E;
+    background:#FFFBF3;color:var(--ink-soft);font-family:'Space Grotesk';font-weight:600;font-size:.85rem;cursor:pointer;
+  }
+  .toggle-cal button.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
-/* Hamburger */
-.hamburger {
-  display: none; flex-direction: column; gap: 5px; cursor: pointer;
-  padding: 8px; border: none; background: none;
-}
-.hamburger span {
-  display: block; width: 22px; height: 2px;
-  background: var(--text); border-radius: 2px;
-  transition: all 0.3s;
-}
+  .age-result{margin-top:24px;}
+  .age-hero{
+    text-align:center;background:linear-gradient(135deg,#2B1806,#4A2A0C);
+    color:var(--paper);border-radius:12px;padding:26px 20px;margin-bottom:16px;
+  }
+  .age-hero .num{font-family:'Tiro Devanagari Hindi', serif;font-size:3rem;color:var(--marigold);line-height:1;}
+  .age-hero .lab{font-size:.85rem;color:#D9C9AC;margin-top:6px;letter-spacing:.03em;}
+  .age-hero .breakdown{margin-top:10px;font-size:.95rem;color:var(--paper);}
 
-/* Mobile nav */
-.mobile-nav {
-  display: none;
-  position: fixed; top: var(--nav-h); left:0; right:0; bottom:0;
-  background: var(--bg);
-  overflow-y: auto;
-  z-index: 999;
-  padding: 16px;
-}
-.mobile-nav.open { display: block; }
-.mobile-nav-item {
-  border-bottom: 1px solid var(--border);
-}
-.mobile-nav-link {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-.mobile-nav-sub {
-  display: none;
-  padding-left: 16px;
-}
-.mobile-nav-sub.open { display: block; }
-.mobile-nav-sub-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 8px;
-  font-size: 0.88rem;
-  cursor: pointer;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
-}
-.mobile-nav-sub-item:hover { color: var(--accent); }
-.mobile-nav-sub-sub { display: none; padding-left: 16px; }
-.mobile-nav-sub-sub.open { display: block; }
-.mobile-nav-sub-sub-item {
-  padding: 8px 8px;
-  font-size: 0.84rem;
-  color: var(--muted);
-  cursor: pointer;
-}
-.mobile-nav-sub-sub-item:hover { color: var(--accent); }
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media (max-width:600px){.stat-row{grid-template-columns:1fr;}}
+  .stat{background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;}
+  .stat .v{font-family:'Tiro Devanagari Hindi', serif;font-size:1.35rem;color:var(--vermilion);}
+  .stat .l{font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:3px;}
 
-/* ── PAGES ── */
-.page { display: none; padding-top: var(--nav-h); min-height: 100vh; }
-.page.active { display: block; }
+  footer{text-align:center;color:#7C8AA8;font-size:.78rem;margin-top:56px;line-height:1.6;}
+  footer a{color:#B9C4DA;}
 
-/* ── HOME ── */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  min-height: calc(100vh - var(--nav-h));
-  align-items: stretch;
-}
+  /* ---------- Credit card ---------- */
+  .credit{
+    max-width:420px;margin:0 auto;padding:22px 22px 20px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(247,236,217,.14);
+    border-radius:16px;
+    display:flex;align-items:center;gap:16px;text-align:left;
+  }
+  .credit .avatar{
+    width:56px;height:56px;border-radius:50%;flex:none;
+    background:linear-gradient(135deg, var(--marigold), var(--vermilion));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Tiro Devanagari Hindi', serif;font-size:1.3rem;color:#2B1806;
+    box-shadow:0 8px 16px -6px rgba(0,0,0,.5);
+    overflow:hidden;
+    border:2px solid rgba(247,236,217,.5);
+  }
+  .credit .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .credit .who{font-size:.92rem;color:#DCE3F0;line-height:1.55;}
+  .credit .who strong{color:var(--paper);font-family:'Tiro Devanagari Hindi', serif;font-size:1.05rem;font-weight:400;display:block;}
+  .credit .who a{color:var(--marigold);text-decoration:none;border-bottom:1px solid rgba(232,162,61,.4);}
+  .credit .who a:hover{border-bottom-color:var(--marigold);}
 
-.hero-text {
-  padding: clamp(40px, 8vw, 100px) clamp(24px, 5vw, 72px);
-  display: flex; flex-direction: column; justify-content: center;
-}
-
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: #e8f5ee; color: var(--accent);
-  padding: 6px 14px; border-radius: 100px;
-  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 24px;
-  width: fit-content;
-}
-.hero-badge::before {
-  content: ''; width: 6px; height: 6px;
-  background: var(--accent); border-radius: 50%;
-}
-
-.hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.8rem, 6vw, 5rem);
-  line-height: 1.05;
-  font-weight: 900;
-  letter-spacing: -2px;
-  margin-bottom: 20px;
-}
-.hero-title em { color: var(--accent); font-style: normal; }
-
-.hero-sub {
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.7;
-  max-width: 480px;
-  margin-bottom: 36px;
-}
-
-.hero-cards {
-  display: flex; gap: 12px; flex-wrap: wrap;
-}
-
-.hero-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-.hero-card:hover {
-  border-color: var(--accent);
-  background: #e8f5ee;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(45,106,79,0.12);
-}
-
-.hero-photo {
-  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-  min-height: 500px;
-}
-
-.hero-photo::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-.avatar-wrap {
-  position: relative; z-index:1;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 20px;
-  padding: 40px;
-}
-
-.avatar-ring {
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  border: 4px solid rgba(255,255,255,0.3);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-
-.avatar-inner {
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 5rem;
-  color: rgba(255,255,255,0.9);
-  overflow: hidden;
-}
-
-.avatar-img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.avatar-name {
-  color: white;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-}
-.avatar-sub {
-  color: rgba(255,255,255,0.65);
-  font-size: 0.82rem;
-  text-align: center;
-}
-
-.info-chips {
-  display: flex; flex-direction: column; gap: 8px;
-  width: 100%;
-}
-.chip {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 8px;
-  padding: 8px 14px;
-  color: rgba(255,255,255,0.85);
-  font-size: 0.8rem;
-  display: flex; gap: 8px;
-}
-.chip-label { color: rgba(255,255,255,0.45); min-width: 60px; }
-
-/* About section */
-.section {
-  padding: clamp(48px, 8vw, 96px) clamp(24px, 5vw, 72px);
-  max-width: 1100px; margin: 0 auto;
-}
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 900;
-  letter-spacing: -1px;
-  margin-bottom: 32px;
-}
-.section-title span { color: var(--accent); }
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-}
-
-.about-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px;
-}
-.about-card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-  display: flex; gap: 10px; align-items: center;
-}
-.about-card h3::before {
-  content: '';
-  width: 4px; height: 20px;
-  background: var(--accent);
-  border-radius: 2px;
-  display: block;
-}
-.about-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
-
-.edu-item {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.88rem;
-}
-.edu-item:last-child { border-bottom: none; }
-.edu-year { font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
-.edu-school { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-
-/* ── INNER PAGES ── */
-.page-header {
-  background: linear-gradient(135deg, var(--accent) 0%, #1b4332 100%);
-  padding: clamp(40px, 6vw, 80px) clamp(24px, 5vw, 72px);
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-.page-header::before {
-  content: '';
-  position: absolute; top: -50%; right: -10%;
-  width: 500px; height: 500px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 50%;
-}
-.page-header-back {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: rgba(255,255,255,0.7);
-  font-size: 0.82rem;
-  cursor: pointer;
-  margin-bottom: 16px;
-  transition: color 0.2s;
-}
-.page-header-back:hover { color: white; }
-.page-header-back::before {
-  content: '←';
-  font-size: 1rem;
-}
-.page-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
-  font-weight: 900;
-  letter-spacing: -1px;
-  position: relative; z-index:1;
-}
-.page-header p {
-  color: rgba(255,255,255,0.7);
-  margin-top: 8px;
-  font-size: 0.92rem;
-  position: relative; z-index:1;
-}
-
-.grid-page {
-  padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 72px);
-  max-width: 1000px; margin: 0 auto;
-}
-
-/* Class grids */
-.subject-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.subject-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.subject-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(45,106,79,0.12);
-}
-.subject-icon {
-  width: 44px; height: 44px;
-  background: #e8f5ee;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
-  margin-bottom: 4px;
-}
-.subject-card h3 { font-size: 0.95rem; font-weight: 600; }
-.subject-card p { font-size: 0.8rem; color: var(--muted); }
-
-/* Semester grid */
-.sem-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-  margin-top: 8px;
-}
-.sem-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 28px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
-.sem-card:hover {
-  border-color: var(--accent);
-  background: #e8f5ee;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(45,106,79,0.12);
-}
-.sem-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: var(--accent);
-  line-height: 1;
-}
-.sem-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
-
-/* Subjects inner */
-.subjects-list {
-  display: flex; flex-direction: column; gap: 12px;
-  margin-top: 8px;
-}
-.subjects-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 22px;
-  display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.subjects-item:hover {
-  border-color: var(--accent);
-  background: #f8fdf9;
-  box-shadow: 0 4px 16px rgba(45,106,79,0.08);
-}
-.subjects-item-left { display: flex; align-items: center; gap: 14px; }
-.subjects-item-icon {
-  width: 38px; height: 38px;
-  background: #e8f5ee; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
-}
-.subjects-item h4 { font-size: 0.9rem; font-weight: 600; }
-.subjects-item p { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-.subjects-item-arrow {
-  color: var(--muted);
-  font-size: 1.2rem;
-}
-
-/* Upload box */
-.upload-zone {
-  border: 2px dashed var(--border);
-  border-radius: 16px;
-  padding: 48px 32px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 32px;
-}
-.upload-zone:hover { border-color: var(--accent); background: #f0faf4; }
-.upload-icon { font-size: 2.5rem; margin-bottom: 12px; }
-.upload-zone h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
-.upload-zone p { font-size: 0.83rem; color: var(--muted); }
-.upload-btn {
-  display: inline-block;
-  margin-top: 16px;
-  background: var(--accent);
-  color: white;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: none;
-}
-.upload-btn:hover { background: #1b4332; }
-
-.page-section-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  margin-bottom: 16px;
-}
-
-/* Footer */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 32px clamp(24px, 5vw, 72px);
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-footer strong { color: var(--accent); }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .hero { grid-template-columns: 1fr; }
-  .hero-photo { min-height: 350px; order: -1; }
-  .about-grid { grid-template-columns: 1fr; }
-  .avatar-ring { width: 150px; height: 150px; }
-  .avatar-inner { width: 130px; height: 130px; font-size: 3.5rem; }
-}
-
-@media (max-width: 480px) {
-  .subject-grid { grid-template-columns: 1fr; }
-  .sem-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Animation */
-@keyframes fadeUp {
-  from { opacity:0; transform: translateY(16px); }
-  to { opacity:1; transform: translateY(0); }
-}
-.page.active .page-header,
-.page.active .grid-page,
-.page.active .hero {
-  animation: fadeUp 0.35s ease;
-}
+  /* ---------- Responsive refinements ---------- */
+  @media (max-width:600px){
+    header{padding:36px 16px 20px;}
+    .pagoda{width:96px;height:74px;}
+    .wrap{padding:0 14px 50px;}
+    .card{padding:22px 18px 20px;}
+    nav.tabs button{padding:11px 16px;font-size:.88rem;flex:1 1 auto;text-align:center;}
+    .field-row{gap:8px;}
+    .field{min-width:78px;}
+    .age-hero .num{font-size:2.4rem;}
+    .credit{flex-direction:column;text-align:center;padding:20px 18px;}
+    .credit .who{font-size:.88rem;}
+  }
+  @media (max-width:380px){
+    header h1{font-size:1.9rem;}
+    .field-row{flex-direction:column;}
+    .field{width:100%;}
+  }
 </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
-<nav>
-  <div class="nav-logo" onclick="showPage('home')">Edu<span>Nest</span></div>
-  <ul class="nav-links">
-    <li class="nav-item">
-      <button class="nav-link" onclick="showPage('home')">Home</button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="toggleNav(this)">+2 Class <span class="arrow"></span></button>
-      <div class="dropdown">
-        <div class="dropdown-item" onclick="showPage('class11');closeAllNav()">Class 11</div>
-        <div class="dropdown-item" onclick="showPage('class12');closeAllNav()">Class 12</div>
-      </div>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="toggleNav(this)">IOE Engineering <span class="arrow"></span></button>
-      <div class="dropdown">
-        <div class="dropdown-item" onclick="showPage('civil');closeAllNav()">Civil Engineering</div>
-        <div class="dropdown-item" onclick="showSemPage('computer-sem');closeAllNav()">Computer Engineering</div>
-        <div class="dropdown-item" onclick="showSemPage('electronics-sem');closeAllNav()">Electronics Engineering</div>
-        <div class="dropdown-item" onclick="showSemPage('electrical-sem');closeAllNav()">Electrical Engineering</div>
-      </div>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="showSemPage('csit-sem');closeAllNav()">BSc CSIT</button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="showSemPage('bca-sem');closeAllNav()">BCA</button>
-    </li>
-  </ul>
-  <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+<header>
+  <svg class="pagoda" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="14" r="5" fill="#E8A23D"/>
+    <rect x="97" y="18" width="6" height="18" fill="#E8A23D"/>
+    <polygon points="70,36 130,36 112,52 88,52" fill="#3E7CB1"/>
+    <polygon points="60,56 140,56 118,74 82,74" fill="#C0392B"/>
+    <polygon points="45,78 155,78 128,102 72,102" fill="#E8A23D"/>
+    <polygon points="25,106 175,106 140,138 60,138" fill="#C97F1F"/>
+  </svg>
+  <h1>मिति</h1>
+  <p class="sub">A small toolkit for the Bikram Sambat calendar — convert between BS and AD dates, and work out an age from either calendar. Built for dates from 2000–2090 BS (1943–2034 AD).</p>
 
-<!-- Mobile Nav -->
-<div class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-item">
-    <div class="mobile-nav-link" onclick="showPage('home');closeMobileNav()">Home</div>
-  </div>
-  <div class="mobile-nav-item">
-    <div class="mobile-nav-link" onclick="toggleMobileSub('m-plus2')">+2 Class <span>▾</span></div>
-    <div class="mobile-nav-sub" id="m-plus2">
-      <div class="mobile-nav-sub-item" onclick="showPage('class11');closeMobileNav()">Class 11</div>
-      <div class="mobile-nav-sub-item" onclick="showPage('class12');closeMobileNav()">Class 12</div>
-    </div>
-  </div>
-  <div class="mobile-nav-item">
-    <div class="mobile-nav-link" onclick="toggleMobileSub('m-ioe')">IOE Engineering <span>▾</span></div>
-    <div class="mobile-nav-sub" id="m-ioe">
-      <div class="mobile-nav-sub-item" onclick="showPage('civil');closeMobileNav()">Civil Engineering</div>
-      <div class="mobile-nav-sub-item" onclick="showSemPage('computer-sem');closeMobileNav()">Computer Engineering</div>
-      <div class="mobile-nav-sub-item" onclick="showSemPage('electronics-sem');closeMobileNav()">Electronics Engineering</div>
-      <div class="mobile-nav-sub-item" onclick="showSemPage('electrical-sem');closeMobileNav()">Electrical Engineering</div>
-    </div>
-  </div>
-  <div class="mobile-nav-item">
-    <div class="mobile-nav-link" onclick="showSemPage('csit-sem');closeMobileNav()">BSc CSIT</div>
-  </div>
-  <div class="mobile-nav-item">
-    <div class="mobile-nav-link" onclick="showSemPage('bca-sem');closeMobileNav()">BCA</div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════ -->
-<!-- HOME PAGE -->
-<!-- ══════════════════════════════════ -->
-<div class="page active" id="page-home">
-  <div class="hero">
-    <div class="hero-text">
-      <div class="hero-badge">Reading Materials Platform</div>
-      <h1 class="hero-title">Learn<br><em>Without</em><br>Limits.</h1>
-      <p class="hero-sub">EduNest by Pratik Timsina — a curated hub of study materials for +2, IOE Engineering, BSc CSIT, and BCA students across Nepal.</p>
-      <div class="hero-cards">
-        <div class="hero-card" onclick="showPage('class11')">📗 Class 11</div>
-        <div class="hero-card" onclick="showPage('class12')">📘 Class 12</div>
-        <div class="hero-card" onclick="showPage('ioe')">🏗 IOE Engineering</div>
-        <div class="hero-card" onclick="showSemPage('csit-sem')">💻 BSc CSIT</div>
-        <div class="hero-card" onclick="showSemPage('bca-sem')">🎓 BCA</div>
-      </div>
-    </div>
-    <div class="hero-photo">
-      <div class="avatar-wrap">
-        <div class="avatar-ring">
-          <div class="avatar-inner">🎓</div>
-        </div>
-        <div class="avatar-name">Pratik Timsina</div>
-        <div class="avatar-sub">Electronics · Communication · Information Engineering</div>
-        <div class="info-chips">
-          <div class="chip"><span class="chip-label">DOB</span> December 13, 2006</div>
-          <div class="chip"><span class="chip-label">From</span> Jhapa, Nepal</div>
-          <div class="chip"><span class="chip-label">Lives</span> Lalitpur, Nepal</div>
-          <div class="chip"><span class="chip-label">Email</span> info@pratiktimsina.com.np</div>
-        </div>
-      </div>
-    </div>
+  <div class="bunting" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <div class="section">
-    <div class="section-title">About <span>Me</span></div>
-    <div class="about-grid">
-      <div class="about-card">
-        <h3>Who I Am</h3>
-        <p>I am an aspiring engineer passionate about electronics, communication systems, and information engineering. My academic path reflects dedication and consistency, from completing SEE and SLC at Shree Adarsha Secondary School to joining the National College of Engineering.</p>
-        <br>
-        <p>Beyond academics, I enjoy programming (especially in C), structured problem-solving, and creating clear, visually organized presentations. I am also building my personal blog to share knowledge, projects, and reflections.</p>
-        <br>
-        <p>Music, creative exploration, and digital tools balance my technical pursuits, keeping me inspired and versatile.</p>
+  <nav class="tabs">
+    <button id="tabConvert" class="active">Convert Date</button>
+    <button id="tabAge">Calculate Age</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- PAGE 1: CONVERTER -->
+  <section id="pageConvert" class="page active">
+    <div class="grid2">
+
+      <!-- BS -> AD -->
+      <div class="card">
+        <h2>Bikram Sambat → English</h2>
+        <p class="hint">Enter a Nepali (BS) date to see the matching AD date.</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="bsYear">Year (BS)</label>
+            <select id="bsYear"></select>
+          </div>
+          <div class="field">
+            <label for="bsMonth">Month</label>
+            <select id="bsMonth"></select>
+          </div>
+          <div class="field">
+            <label for="bsDay">Day</label>
+            <select id="bsDay"></select>
+          </div>
+        </div>
+        <button class="btn" id="convertBsToAd">Convert to AD →</button>
+        <div class="result" id="resultBsToAd">
+          <p class="big" id="resBsToAdBig"></p>
+          <p class="small" id="resBsToAdSmall"></p>
+        </div>
+        <p class="error" id="errBsToAd"></p>
       </div>
-      <div class="about-card">
-        <h3>Education Journey</h3>
-        <div class="edu-item">
-          <div class="edu-year">2079 B.S.</div>
-          <div style="font-size:0.88rem;font-weight:600;">Secondary Education Examination (SEE)</div>
-          <div class="edu-school">Shree Adarsha Secondary School, Buddhashanti-2, Jhapa</div>
+
+      <!-- AD -> BS -->
+      <div class="card">
+        <h2>English → Bikram Sambat</h2>
+        <p class="hint">Enter an AD date to see the matching Nepali (BS) date.</p>
+        <div class="field-row">
+          <div class="field" style="flex:1 1 100%;">
+            <label for="adDate">Date (AD)</label>
+            <input type="date" id="adDate" min="1943-04-14" max="2034-04-13">
+          </div>
         </div>
-        <div class="edu-item">
-          <div class="edu-year">2082 B.S.</div>
-          <div style="font-size:0.88rem;font-weight:600;">School Leaving Certificate (SLC)</div>
-          <div class="edu-school">Shree Adarsha Secondary School, Buddhashanti-2, Jhapa</div>
+        <button class="btn alt" id="convertAdToBs">Convert to BS →</button>
+        <div class="result" id="resultAdToBs">
+          <p class="big" id="resAdToBsBig"></p>
+          <p class="small" id="resAdToBsSmall"></p>
+          <p class="np" id="resAdToBsNp"></p>
         </div>
-        <div class="edu-item">
-          <div class="edu-year">From Nov 19, 2025</div>
-          <div style="font-size:0.88rem;font-weight:600;">Undergraduate — Electronics, Communication & Information Engineering</div>
-          <div class="edu-school">National College of Engineering, Nepal</div>
+        <p class="error" id="errAdToBs"></p>
+      </div>
+
+    </div>
+    <p class="swap-note">Both converters work independently — fill in either side, any time.</p>
+  </section>
+
+  <!-- PAGE 2: AGE CALCULATOR -->
+  <section id="pageAge" class="page">
+    <div class="card age-card">
+      <h2>Work out an age</h2>
+      <p class="hint">Choose which calendar your date of birth is in, then enter it.</p>
+
+      <div class="toggle-cal">
+        <button id="calBS" class="active">Date of birth in BS</button>
+        <button id="calAD">Date of birth in AD</button>
+      </div>
+
+      <div id="birthBSFields" class="field-row">
+        <div class="field">
+          <label for="birthBsYear">Year (BS)</label>
+          <select id="birthBsYear"></select>
+        </div>
+        <div class="field">
+          <label for="birthBsMonth">Month</label>
+          <select id="birthBsMonth"></select>
+        </div>
+        <div class="field">
+          <label for="birthBsDay">Day</label>
+          <select id="birthBsDay"></select>
         </div>
       </div>
-    </div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong> &nbsp;·&nbsp; info@pratiktimsina.com.np</footer>
-</div>
 
-<!-- ══════════════════════════════════ -->
-<!-- CLASS 11 -->
-<!-- ══════════════════════════════════ -->
-<div class="page" id="page-class11">
-  <div class="page-header">
-    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
-    <h1>Class 11 — +2</h1>
-    <p>NEB curriculum study materials for Grade 11</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">Subjects</div>
-    <div class="subjects-list" id="class11-subjects"></div>
-    <div class="upload-zone" onclick="triggerUpload()">
-      <div class="upload-icon">📤</div>
-      <h3>Upload Study Materials</h3>
-      <p>PDF, DOCX, or image files accepted</p>
-      <button class="upload-btn">Choose File</button>
-      <input type="file" id="fileInput" style="display:none" accept=".pdf,.docx,.jpg,.png" onchange="handleUpload(event)">
-    </div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
-</div>
-
-<!-- CLASS 12 -->
-<div class="page" id="page-class12">
-  <div class="page-header">
-    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
-    <h1>Class 12 — +2</h1>
-    <p>NEB curriculum study materials for Grade 12</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">Subjects</div>
-    <div class="subjects-list" id="class12-subjects"></div>
-    <div class="upload-zone" onclick="triggerUpload()">
-      <div class="upload-icon">📤</div>
-      <h3>Upload Study Materials</h3>
-      <p>PDF, DOCX, or image files accepted</p>
-      <button class="upload-btn">Choose File</button>
-    </div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
-</div>
-
-<!-- CIVIL ENGINEERING FACULTY PAGE -->
-<div class="page" id="page-civil">
-  <div class="page-header">
-    <div class="page-header-back" onclick="showPage('ioe')">← Back to IOE Engineering</div>
-    <h1>Civil Engineering</h1>
-    <p>Institute of Engineering — Tribhuvan University · 4 Years · 8 Semesters</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">About This Program</div>
-    <div class="about-card" style="margin-bottom:28px">
-      <h3>Program Overview</h3>
-      <p>The Bachelor of Civil Engineering (B.E. Civil) at IOE is a four-year undergraduate program covering structural design, transportation, water resources, geotechnical, and environmental engineering. Students gain hands-on experience through lab sessions, field surveys, and a final project.</p>
-    </div>
-    <div class="page-section-label">Select a Semester</div>
-    <div class="sem-grid">
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',1)"><div class="sem-num">1</div><div class="sem-label">Semester 1</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',2)"><div class="sem-num">2</div><div class="sem-label">Semester 2</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',3)"><div class="sem-num">3</div><div class="sem-label">Semester 3</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',4)"><div class="sem-num">4</div><div class="sem-label">Semester 4</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',5)"><div class="sem-num">5</div><div class="sem-label">Semester 5</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',6)"><div class="sem-num">6</div><div class="sem-label">Semester 6</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',7)"><div class="sem-num">7</div><div class="sem-label">Semester 7</div></div>
-      <div class="sem-card" onclick="showSubjectsPage('civil-sem',8)"><div class="sem-num">8</div><div class="sem-label">Semester 8</div></div>
-    </div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
-</div>
-
-<!-- IOE FACULTY PICKER -->
-<div class="page" id="page-ioe">
-  <div class="page-header">
-    <div class="page-header-back" onclick="showPage('home')">Back to Home</div>
-    <h1>IOE Engineering</h1>
-    <p>Institute of Engineering — Tribhuvan University</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">Select Your Faculty</div>
-    <div class="subject-grid">
-      <div class="subject-card" onclick="showPage('civil')">
-        <div class="subject-icon">🏗</div>
-        <h3>Civil Engineering</h3>
-        <p>8 semesters · TU affiliated</p>
+      <div id="birthADFields" class="field-row" style="display:none;">
+        <div class="field" style="flex:1 1 100%;">
+          <label for="birthAdDate">Date of birth (AD)</label>
+          <input type="date" id="birthAdDate" min="1943-04-14" max="2034-04-13">
+        </div>
       </div>
-      <div class="subject-card" onclick="showSemPage('computer-sem')">
-        <div class="subject-icon">💻</div>
-        <h3>Computer Engineering</h3>
-        <p>8 semesters · TU affiliated</p>
-      </div>
-      <div class="subject-card" onclick="showSemPage('electronics-sem')">
-        <div class="subject-icon">📡</div>
-        <h3>Electronics Engineering</h3>
-        <p>8 semesters · TU affiliated</p>
-      </div>
-      <div class="subject-card" onclick="showSemPage('electrical-sem')">
-        <div class="subject-icon">⚡</div>
-        <h3>Electrical Engineering</h3>
-        <p>8 semesters · TU affiliated</p>
+
+      <button class="btn" id="calcAgeBtn">Calculate age</button>
+      <p class="error" id="errAge"></p>
+
+      <div class="age-result" id="ageResultWrap" style="display:none;">
+        <div class="age-hero">
+          <div class="num" id="ageBig">—</div>
+          <div class="lab">years old</div>
+          <div class="breakdown" id="ageBreakdown"></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="v" id="statDays">—</div><div class="l">Days lived</div></div>
+          <div class="stat"><div class="v" id="statWeeks">—</div><div class="l">Weeks lived</div></div>
+          <div class="stat"><div class="v" id="statNextBday">—</div><div class="l">Days to next birthday</div></div>
+        </div>
+        <p class="small" id="equivDate" style="text-align:center;color:#93A2C0;margin-top:16px;"></p>
       </div>
     </div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
+  </section>
+
 </div>
 
-<!-- DYNAMIC SEMESTER PAGE (reused) -->
-<div class="page" id="page-semesters">
-  <div class="page-header">
-    <div class="page-header-back" id="sem-back-btn">Back</div>
-    <h1 id="sem-page-title">Semesters</h1>
-    <p id="sem-page-sub">Select a semester to view materials</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">Choose Semester</div>
-    <div class="sem-grid" id="sem-grid-container"></div>
-  </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
-</div>
+<footer>
+  <p>Dates supported: BS 2000–2090 (≈ AD 14 Apr 1943 – 13 Apr 2034), Kathmandu calendar data.</p>
 
-<!-- DYNAMIC SUBJECTS PAGE (after semester click) -->
-<div class="page" id="page-subjects">
-  <div class="page-header">
-    <div class="page-header-back" id="subj-back-btn">Back</div>
-    <h1 id="subj-page-title">Semester Subjects</h1>
-    <p id="subj-page-sub">Upload or browse study materials</p>
-  </div>
-  <div class="grid-page">
-    <div class="page-section-label">Subjects</div>
-    <div class="subjects-list" id="subj-list-container"></div>
-    <div class="upload-zone" onclick="triggerUpload()">
-      <div class="upload-icon">📤</div>
-      <h3>Upload Study Materials</h3>
-      <p>PDF, DOCX, or image files accepted</p>
-      <button class="upload-btn">Choose File</button>
+  <div class="credit">
+    <div class="avatar">
+      <!-- Replace this with <img src="your-photo.jpg" alt="Prateek Timsina"> for a real photo -->
+      PT
+    </div>
+    <div class="who">
+      <strong>Made by Prateek Timsina</strong>
+      <a href="https://www.pratiktimsina.com.np" target="_blank" rel="noopener">www.pratiktimsina.com.np</a><br>
+      <a href="mailto:info@pratiktimsina.com.np">info@pratiktimsina.com.np</a>
     </div>
   </div>
-  <footer>Built with ♥ by <strong>Pratik Timsina</strong></footer>
-</div>
+</footer>
 
 <script>
-// ── DATA ──
-const DATA = {
-  class11: {
-    subjects: ['Mathematics','Physics','Chemistry','English','Computer Science','Biology','Nepali','Economics','Account','Business Studies']
-  },
-  class12: {
-    subjects: ['Mathematics','Physics','Chemistry','English','Computer Science','Biology','Nepali','Economics','Account','Business Studies']
-  },
-  'civil-sem': {
-    title: 'Civil Engineering',
-    parent: 'ioe',
-    parentLabel: 'IOE Engineering',
-    semesters: 8,
-    subjects: {
-      1: ['Engineering Mathematics I','Engineering Physics','Engineering Chemistry','Engineering Drawing I','Computer Programming'],
-      2: ['Engineering Mathematics II','Object Oriented Programming','Engineering Drawing II','Engineering Materials','Probability & Statistics'],
-      3: ['Surveying I','Fluid Mechanics','Strength of Materials','Geology','Engineering Math III'],
-      4: ['Surveying II','Hydraulics','Theory of Structures','Building Technology','Numerical Methods'],
-      5: ['Foundation Engineering','Transportation Engineering I','Water Supply Engineering','Estimating & Costing','Elective I'],
-      6: ['Design of Steel Structures','Transportation Engineering II','Sanitary Engineering','Hydrology','Elective II'],
-      7: ['Dam Engineering','Construction Management','Irrigation Engineering','Bridge Engineering','Elective III'],
-      8: ['Project Work','Engineering Professional Practice','Earthquake Engineering','Elective IV','Elective V']
-    }
-  },
-  'computer-sem': {
-    title: 'Computer Engineering',
-    parent: 'ioe',
-    parentLabel: 'IOE Engineering',
-    semesters: 8,
-    subjects: {
-      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop Technology'],
-      2: ['Engineering Math II','Object Oriented Programming','Electronics Devices','Data Structure & Algorithms','Discrete Mathematics'],
-      3: ['Engineering Math III','Digital Logic','Computer Organization','Operating Systems','Probability & Statistics'],
-      4: ['Microprocessors','Computer Networks','Database Management','Software Engineering','Numerical Methods'],
-      5: ['Artificial Intelligence','Distributed Systems','Computer Graphics','Theory of Computation','Elective I'],
-      6: ['Embedded Systems','Compiler Design','Information Security','Digital Signal Processing','Elective II'],
-      7: ['Machine Learning','Cloud Computing','Mobile Application','Project I','Elective III'],
-      8: ['Project II','Engineering Professional Practice','Elective IV','Elective V','Thesis']
-    }
-  },
-  'electronics-sem': {
-    title: 'Electronics Engineering',
-    parent: 'ioe',
-    parentLabel: 'IOE Engineering',
-    semesters: 8,
-    subjects: {
-      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop'],
-      2: ['Engineering Math II','Electronics Devices','Digital Logic','Analog Electronics','Network Theory'],
-      3: ['Engineering Math III','Signals & Systems','Microprocessors','Communication Systems I','Probability & Statistics'],
-      4: ['Digital Communications','Electromagnetic Fields','VLSI Design','Control Systems','Numerical Methods'],
-      5: ['Communication Systems II','Antenna & Propagation','Digital Signal Processing','Microwave Engineering','Elective I'],
-      6: ['Information Theory','Optical Communication','Embedded Systems','Satellite Communications','Elective II'],
-      7: ['Mobile Communication','Advanced DSP','Project I','Research Methodology','Elective III'],
-      8: ['Project II','Professional Practice','Elective IV','Elective V','Thesis']
-    }
-  },
-  'electrical-sem': {
-    title: 'Electrical Engineering',
-    parent: 'ioe',
-    parentLabel: 'IOE Engineering',
-    semesters: 8,
-    subjects: {
-      1: ['Engineering Math I','Engineering Physics','Computer Programming','Engineering Drawing','Workshop'],
-      2: ['Engineering Math II','Circuit Theory','Electrical Machines I','Electronics Devices','Digital Logic'],
-      3: ['Engineering Math III','Electrical Machines II','Power Systems I','Signals & Systems','Numerical Methods'],
-      4: ['Electrical Machines III','Power Systems II','Control Systems','Power Electronics','Microprocessors'],
-      5: ['Power Systems III','High Voltage Engineering','Switchgear & Protection','Energy Management','Elective I'],
-      6: ['Power System Stability','Electric Drives','Power Quality','Renewable Energy','Elective II'],
-      7: ['Smart Grid','Project I','Research Methodology','Elective III','Elective IV'],
-      8: ['Project II','Professional Practice','Elective V','Elective VI','Thesis']
-    }
-  },
-  'csit-sem': {
-    title: 'BSc CSIT',
-    parent: 'home',
-    parentLabel: 'Home',
-    semesters: 8,
-    subjects: {
-      1: ['Computer Fundamentals','Digital Logic','Mathematics I','English I','Physics'],
-      2: ['Programming in C','Data Structures','Mathematics II','English II','Statistics'],
-      3: ['Object Oriented Programming','Database Management','Discrete Structures','Computer Architecture','Numerical Methods'],
-      4: ['Operating System','Computer Networks','Software Engineering','Theory of Computation','Probability & Statistics'],
-      5: ['Java Programming','Web Technology','Artificial Intelligence','Simulation & Modeling','Elective I'],
-      6: ['Compiler Design','Cryptography','Mobile Computing','Data Mining','Elective II'],
-      7: ['Machine Learning','Cloud Computing','Project I','Internship','Elective III'],
-      8: ['Project II','Entrepreneurship','Research Methods','Elective IV','Elective V']
-    }
-  },
-  'bca-sem': {
-    title: 'BCA',
-    parent: 'home',
-    parentLabel: 'Home',
-    semesters: 8,
-    subjects: {
-      1: ['Computer Fundamentals','Mathematics I','English I','Digital Logic','Principles of Management'],
-      2: ['Programming in C','Mathematics II','English II','Electronics & Computer Hardware','Financial Accounting'],
-      3: ['Data Structures','Object Oriented Programming','Database Management','Computer Networks','Statistics'],
-      4: ['Web Technology','System Analysis & Design','Operating System','Economics','Elective I'],
-      5: ['Java Programming','Software Engineering','Artificial Intelligence','Project Management','Elective II'],
-      6: ['Multimedia Technology','E-commerce','Mobile Application','Internship','Elective III'],
-      7: ['Project I','Advanced Web Tech','Information Security','Elective IV','Elective V'],
-      8: ['Project II','Entrepreneurship','Research Methods','Elective VI','Elective VII']
-    }
+/* ---------------- BS calendar data (2000–2090) ---------------- */
+const bsData = {2000:[30,32,31,32,31,30,30,30,29,30,29,31],2001:[31,31,32,31,31,31,30,29,30,29,30,30],2002:[31,31,32,32,31,30,30,29,30,29,30,30],2003:[31,32,31,32,31,30,30,30,29,29,30,31],2004:[30,32,31,32,31,30,30,30,29,30,29,31],2005:[31,31,32,31,31,31,30,29,30,29,30,30],2006:[31,31,32,32,31,30,30,29,30,29,30,30],2007:[31,32,31,32,31,30,30,30,29,29,30,31],2008:[31,31,31,32,31,31,29,30,30,29,29,31],2009:[31,31,32,31,31,31,30,29,30,29,30,30],2010:[31,31,32,32,31,30,30,29,30,29,30,30],2011:[31,32,31,32,31,30,30,30,29,29,30,31],2012:[31,31,31,32,31,31,29,30,30,29,30,30],2013:[31,31,32,31,31,31,30,29,30,29,30,30],2014:[31,31,32,32,31,30,30,29,30,29,30,30],2015:[31,32,31,32,31,30,30,30,29,29,30,31],2016:[31,31,31,32,31,31,29,30,30,29,30,30],2017:[31,31,32,31,31,31,30,29,30,29,30,30],2018:[31,32,31,32,31,30,30,29,30,29,30,30],2019:[31,32,31,32,31,30,30,30,29,30,29,31],2020:[31,31,31,32,31,31,30,29,30,29,30,30],2021:[31,31,32,31,31,31,30,29,30,29,30,30],2022:[31,32,31,32,31,30,30,30,29,29,30,30],2023:[31,32,31,32,31,30,30,30,29,30,29,31],2024:[31,31,31,32,31,31,30,29,30,29,30,30],2025:[31,31,32,31,31,31,30,29,30,29,30,30],2026:[31,32,31,32,31,30,30,30,29,29,30,31],2027:[30,32,31,32,31,30,30,30,29,30,29,31],2028:[31,31,32,31,31,31,30,29,30,29,30,30],2029:[31,31,32,31,32,30,30,29,30,29,30,30],2030:[31,32,31,32,31,30,30,30,29,29,30,31],2031:[30,32,31,32,31,30,30,30,29,30,29,31],2032:[31,31,32,31,31,31,30,29,30,29,30,30],2033:[31,31,32,32,31,30,30,29,30,29,30,30],2034:[31,32,31,32,31,30,30,30,29,29,30,31],2035:[30,32,31,32,31,31,29,30,30,29,29,31],2036:[31,31,32,31,31,31,30,29,30,29,30,30],2037:[31,31,32,32,31,30,30,29,30,29,30,30],2038:[31,32,31,32,31,30,30,30,29,29,30,31],2039:[31,31,31,32,31,31,29,30,30,29,30,30],2040:[31,31,32,31,31,31,30,29,30,29,30,30],2041:[31,31,32,32,31,30,30,29,30,29,30,30],2042:[31,32,31,32,31,30,30,30,29,29,30,31],2043:[31,31,31,32,31,31,29,30,30,29,30,30],2044:[31,31,32,31,31,31,30,29,30,29,30,30],2045:[31,32,31,32,31,30,30,29,30,29,30,30],2046:[31,32,31,32,31,30,30,30,29,29,30,31],2047:[31,31,31,32,31,31,30,29,30,29,30,30],2048:[31,31,32,31,31,31,30,29,30,29,30,30],2049:[31,32,31,32,31,30,30,30,29,29,30,30],2050:[31,32,31,32,31,30,30,30,29,30,29,31],2051:[31,31,31,32,31,31,30,29,30,29,30,30],2052:[31,31,32,31,31,31,30,29,30,29,30,30],2053:[31,32,31,32,31,30,30,30,29,29,30,30],2054:[31,32,31,32,31,30,30,30,29,30,29,31],2055:[31,31,32,31,31,31,30,29,30,29,30,30],2056:[31,31,32,31,32,30,30,29,30,29,30,30],2057:[31,32,31,32,31,30,30,30,29,29,30,31],2058:[30,32,31,32,31,30,30,30,29,30,29,31],2059:[31,31,32,31,31,31,30,29,30,29,30,30],2060:[31,31,32,32,31,30,30,29,30,29,30,30],2061:[31,32,31,32,31,30,30,30,29,29,30,31],2062:[30,32,31,32,31,31,29,30,29,30,29,31],2063:[31,31,32,31,31,31,30,29,30,29,30,30],2064:[31,31,32,32,31,30,30,29,30,29,30,30],2065:[31,32,31,32,31,30,30,30,29,29,30,31],2066:[31,31,31,32,31,31,29,30,30,29,29,31],2067:[31,31,32,31,31,31,30,29,30,29,30,30],2068:[31,31,32,32,31,30,30,29,30,29,30,30],2069:[31,32,31,32,31,30,30,30,29,29,30,31],2070:[31,31,31,32,31,31,29,30,30,29,30,30],2071:[31,31,32,31,31,31,30,29,30,29,30,30],2072:[31,32,31,32,31,30,30,29,30,29,30,30],2073:[31,32,31,32,31,30,30,30,29,29,30,31],2074:[31,31,31,32,31,31,30,29,30,29,30,30],2075:[31,31,32,31,31,31,30,29,30,29,30,30],2076:[31,32,31,32,31,30,30,30,29,29,30,30],2077:[31,32,31,32,31,30,30,30,29,30,29,31],2078:[31,31,31,32,31,31,30,29,30,29,30,30],2079:[31,31,32,31,31,31,30,29,30,29,30,30],2080:[31,32,31,32,31,30,30,30,29,29,30,30],2081:[31,32,31,32,31,30,30,30,29,30,29,31],2082:[31,31,32,31,31,31,30,29,30,29,30,30],2083:[31,31,32,31,31,31,30,29,30,29,30,30],2084:[31,32,31,32,31,30,30,30,29,29,30,31],2085:[30,32,31,32,31,30,30,30,29,30,29,31],2086:[31,31,32,31,31,31,30,29,30,29,30,30],2087:[31,31,32,31,31,31,30,30,29,30,30,30],2088:[30,31,32,32,30,31,30,30,29,30,30,30],2089:[30,32,31,32,31,30,30,30,29,30,30,30],2090:[30,32,31,32,31,30,30,30,29,30,30,30]};
+
+const BS_MIN = 2000, BS_MAX = 2090;
+const EPOCH_UTC = Date.UTC(1943, 3, 13); // one day before BS 2000/01/01
+const monthNames = ['Baisakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+const monthNamesNp = ['बैशाख','जेठ','असार','श्रावण','भदौ','आश्विन','कार्तिक','मंसिर','पुष','माघ','फागुन','चैत'];
+const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const npDigits = ['०','१','२','३','४','५','६','७','८','९'];
+
+function toNp(num){ return String(num).split('').map(c => /[0-9]/.test(c) ? npDigits[+c] : c).join(''); }
+function yearTotal(y){ return bsData[y].reduce((a,b)=>a+b,0); }
+
+/* days-since-epoch (1-indexed: BS 2000/01/01 == 1) */
+function bsToDaysPassed(y, m, d){
+  if(y < BS_MIN || y > BS_MAX) throw new Error(`Year must be between ${BS_MIN} and ${BS_MAX} BS.`);
+  if(d < 1 || d > bsData[y][m]) throw new Error(`${monthNames[m]} ${y} only has ${bsData[y][m]} days.`);
+  let days = 0;
+  for(let yr = BS_MIN; yr < y; yr++) days += yearTotal(yr);
+  for(let mo = 0; mo < m; mo++) days += bsData[y][mo];
+  return days + d;
+}
+function daysPassedToAD(daysPassed){
+  const dt = new Date(EPOCH_UTC + daysPassed * 86400000);
+  return { year: dt.getUTCFullYear(), month: dt.getUTCMonth(), date: dt.getUTCDate(), day: dt.getUTCDay() };
+}
+function bsToAD(y, m, d){ return daysPassedToAD(bsToDaysPassed(y, m, d)); }
+
+function adToDaysPassed(y, m, d){
+  return Math.round((Date.UTC(y, m, d) - EPOCH_UTC) / 86400000);
+}
+function daysPassedToBS(daysPassed){
+  let y = BS_MIN, remaining = daysPassed;
+  if(remaining < 1) throw new Error(`Date must be on or after 14 April 1943 AD.`);
+  while(true){
+    const t = yearTotal(y);
+    if(remaining <= t) break;
+    remaining -= t; y++;
+    if(y > BS_MAX) throw new Error(`Date must be on or before 13 April 2034 AD.`);
   }
-};
-
-const CLASS_SUBJECTS = {
-  class11: ['📐 Mathematics','🔭 Physics','⚗️ Chemistry','📖 English','💾 Computer Science','🌿 Biology','📝 Nepali','📊 Economics','🧾 Account','🏢 Business Studies'],
-  class12: ['📐 Mathematics','🔭 Physics','⚗️ Chemistry','📖 English','💾 Computer Science','🌿 Biology','📝 Nepali','📊 Economics','🧾 Account','🏢 Business Studies']
-};
-
-let currentSemContext = null;
-let currentSemBack = 'home';
-
-// ── NAVIGATION ──
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo(0, 0);
-  // populate static pages
-  if (id === 'class11') populateClassSubjects('class11');
-  if (id === 'class12') populateClassSubjects('class12');
-}
-
-function showSemPage(key) {
-  const d = DATA[key];
-  if (!d) return;
-  currentSemContext = key;
-  currentSemBack = d.parent;
-
-  document.getElementById('sem-page-title').textContent = d.title + ' — Semesters';
-  document.getElementById('sem-page-sub').textContent = 'Select a semester to view study materials';
-  document.getElementById('sem-back-btn').textContent = '← Back to ' + d.parentLabel;
-  document.getElementById('sem-back-btn').onclick = () => showPage(d.parent);
-
-  const grid = document.getElementById('sem-grid-container');
-  grid.innerHTML = '';
-  for (let i = 1; i <= d.semesters; i++) {
-    const card = document.createElement('div');
-    card.className = 'sem-card';
-    card.innerHTML = `<div class="sem-num">${i}</div><div class="sem-label">Semester ${i}</div>`;
-    card.onclick = () => showSubjectsPage(key, i);
-    grid.appendChild(card);
+  let m = 0;
+  while(true){
+    const md = bsData[y][m];
+    if(remaining <= md) break;
+    remaining -= md; m++;
   }
-
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-semesters').classList.add('active');
-  window.scrollTo(0, 0);
+  const dayOfWeek = daysPassedToAD(daysPassed).day;
+  return { year: y, month: m, date: remaining, day: dayOfWeek };
 }
+function adToBS(y, m, d){ return daysPassedToBS(adToDaysPassed(y, m, d)); }
 
-function showSubjectsPage(key, sem) {
-  const d = DATA[key];
-  document.getElementById('subj-page-title').textContent = d.title + ' — Semester ' + sem;
-  document.getElementById('subj-page-sub').textContent = 'Browse or upload study materials for Semester ' + sem;
-  document.getElementById('subj-back-btn').textContent = '← Back to Semesters';
-  // For civil, back goes to civil faculty page; others go to semesters page
-  if (key === 'civil-sem') {
-    document.getElementById('subj-back-btn').onclick = () => showPage('civil');
-  } else {
-    document.getElementById('subj-back-btn').onclick = () => showSemPage(key);
+/* ---------------- populate selects ---------------- */
+function fillSelect(el, count, startAt){
+  el.innerHTML = '';
+  for(let i = 0; i < count; i++){
+    const val = startAt !== undefined ? startAt + i : i;
+    const opt = document.createElement('option');
+    if(startAt === undefined){ opt.value = i; opt.textContent = monthNames[i]; }
+    else { opt.value = val; opt.textContent = val; }
+    el.appendChild(opt);
   }
-
-  const subjects = d.subjects[sem] || [];
-  const list = document.getElementById('subj-list-container');
-  list.innerHTML = '';
-  subjects.forEach(subj => {
-    const div = document.createElement('div');
-    div.className = 'subjects-item';
-    div.innerHTML = `
-      <div class="subjects-item-left">
-        <div class="subjects-item-icon">📄</div>
-        <div>
-          <h4>${subj}</h4>
-          <p>Notes · Past Papers · Reference Books</p>
-        </div>
-      </div>
-      <div class="subjects-item-arrow">›</div>
-    `;
-    list.appendChild(div);
-  });
-
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-subjects').classList.add('active');
-  window.scrollTo(0, 0);
+}
+function fillYearSelect(el){
+  el.innerHTML = '';
+  for(let y = BS_MAX; y >= BS_MIN; y--){
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    el.appendChild(opt);
+  }
+}
+function fillDaySelect(el, maxDay){
+  const prev = +el.value || 1;
+  el.innerHTML = '';
+  for(let d = 1; d <= maxDay; d++){
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    el.appendChild(opt);
+  }
+  el.value = Math.min(prev, maxDay);
+}
+function wireYearMonthDay(yearEl, monthEl, dayEl, defaultYear){
+  fillYearSelect(yearEl);
+  fillSelect(monthEl, 12);
+  yearEl.value = defaultYear;
+  const updateDays = () => {
+    const y = +yearEl.value, m = +monthEl.value;
+    fillDaySelect(dayEl, bsData[y][m]);
+  };
+  yearEl.addEventListener('change', updateDays);
+  monthEl.addEventListener('change', updateDays);
+  updateDays();
 }
 
-function populateClassSubjects(cls) {
-  const list = document.getElementById(cls + '-subjects');
-  if (!list || list.children.length > 0) return;
-  const subjects = CLASS_SUBJECTS[cls];
-  subjects.forEach(subj => {
-    const div = document.createElement('div');
-    div.className = 'subjects-item';
-    div.innerHTML = `
-      <div class="subjects-item-left">
-        <div class="subjects-item-icon">${subj.split(' ')[0]}</div>
-        <div>
-          <h4>${subj.replace(/^[^\s]+ /, '')}</h4>
-          <p>Notes · Past Papers · Reference Books</p>
-        </div>
-      </div>
-      <div class="subjects-item-arrow">›</div>
-    `;
-    list.appendChild(div);
-  });
+/* today's BS approx (for sensible default selection) */
+const now = new Date();
+let todayBS;
+try {
+  todayBS = adToBS(now.getFullYear(), now.getMonth(), now.getDate());
+} catch(e){
+  todayBS = { year: 2082, month: 0, date: 1 };
 }
 
-// ── DESKTOP DROPDOWN (click-stable) ──
-function toggleNav(btn) {
-  const item = btn.closest('.nav-item');
-  const isOpen = item.classList.contains('open');
-  closeAllNav();
-  if (!isOpen) item.classList.add('open');
-}
-function toggleSub(el) {
-  el.stopPropagation && el.stopPropagation();
-  const item = el.closest ? el : el.target.closest('.sub-dropdown');
-  document.querySelectorAll('.sub-dropdown.open').forEach(s => { if(s !== item) s.classList.remove('open'); });
-  item.classList.toggle('open');
-  event.stopPropagation();
-}
-function closeAllNav() {
-  document.querySelectorAll('.nav-item.open').forEach(i => i.classList.remove('open'));
-  document.querySelectorAll('.sub-dropdown.open').forEach(i => i.classList.remove('open'));
-}
-// Close on outside click
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.nav-item')) closeAllNav();
+const bsYear = document.getElementById('bsYear');
+const bsMonth = document.getElementById('bsMonth');
+const bsDay = document.getElementById('bsDay');
+wireYearMonthDay(bsYear, bsMonth, bsDay, todayBS.year);
+bsMonth.value = todayBS.month;
+fillDaySelect(bsDay, bsData[todayBS.year][todayBS.month]);
+bsDay.value = todayBS.date;
+
+const birthBsYear = document.getElementById('birthBsYear');
+const birthBsMonth = document.getElementById('birthBsMonth');
+const birthBsDay = document.getElementById('birthBsDay');
+wireYearMonthDay(birthBsYear, birthBsMonth, birthBsDay, todayBS.year - 20);
+
+document.getElementById('adDate').valueAsDate = now;
+document.getElementById('birthAdDate').value = '2000-01-01';
+
+/* ---------------- tabs ---------------- */
+const tabConvert = document.getElementById('tabConvert');
+const tabAge = document.getElementById('tabAge');
+const pageConvert = document.getElementById('pageConvert');
+const pageAge = document.getElementById('pageAge');
+tabConvert.addEventListener('click', () => {
+  tabConvert.classList.add('active'); tabAge.classList.remove('active');
+  pageConvert.classList.add('active'); pageAge.classList.remove('active');
+});
+tabAge.addEventListener('click', () => {
+  tabAge.classList.add('active'); tabConvert.classList.remove('active');
+  pageAge.classList.add('active'); pageConvert.classList.remove('active');
 });
 
-// ── MOBILE NAV ──
-function toggleMobileNav() {
-  document.getElementById('mobileNav').classList.toggle('open');
-}
-function closeMobileNav() {
-  document.getElementById('mobileNav').classList.remove('open');
-}
-function toggleMobileSub(id) {
-  const el = document.getElementById(id);
-  el.classList.toggle('open');
+/* ---------------- converter actions ---------------- */
+document.getElementById('convertBsToAd').addEventListener('click', () => {
+  const errEl = document.getElementById('errBsToAd');
+  const resEl = document.getElementById('resultBsToAd');
+  errEl.classList.remove('show'); resEl.classList.remove('show');
+  try{
+    const y = +bsYear.value, m = +bsMonth.value, d = +bsDay.value;
+    const ad = bsToAD(y, m, d);
+    const adDateObj = new Date(Date.UTC(ad.year, ad.month, ad.date));
+    document.getElementById('resBsToAdBig').textContent =
+      `${monthNamesEn(ad.month)} ${ad.date}, ${ad.year}`;
+    document.getElementById('resBsToAdSmall').textContent =
+      `${dayNames[ad.day]} · ${monthNames[m]} ${d}, ${y} BS`;
+    resEl.classList.add('show');
+  }catch(e){
+    errEl.textContent = e.message; errEl.classList.add('show');
+  }
+});
+
+function monthNamesEn(idx){
+  return ['January','February','March','April','May','June','July','August','September','October','November','December'][idx];
 }
 
-// ── UPLOAD ──
-function triggerUpload() {
-  document.getElementById('fileInput') && document.getElementById('fileInput').click();
-}
-function handleUpload(e) {
-  const f = e.target.files[0];
-  if (f) alert('File "' + f.name + '" selected for upload!\n(Backend integration required to store files.)');
-}
+document.getElementById('convertAdToBs').addEventListener('click', () => {
+  const errEl = document.getElementById('errAdToBs');
+  const resEl = document.getElementById('resultAdToBs');
+  errEl.classList.remove('show'); resEl.classList.remove('show');
+  const val = document.getElementById('adDate').value;
+  if(!val){ errEl.textContent = 'Please choose a date.'; errEl.classList.add('show'); return; }
+  const [y, m, d] = val.split('-').map(Number);
+  try{
+    const bs = adToBS(y, m - 1, d);
+    document.getElementById('resAdToBsBig').textContent =
+      `${monthNames[bs.month]} ${bs.date}, ${bs.year} BS`;
+    document.getElementById('resAdToBsSmall').textContent =
+      `${dayNames[bs.day]} · ${monthNamesEn(m-1)} ${d}, ${y} AD`;
+    document.getElementById('resAdToBsNp').textContent =
+      `${monthNamesNp[bs.month]} ${toNp(bs.date)}, ${toNp(bs.year)}`;
+    resEl.classList.add('show');
+  }catch(e){
+    errEl.textContent = e.message; errEl.classList.add('show');
+  }
+});
+
+/* ---------------- age calculator ---------------- */
+const calBS = document.getElementById('calBS');
+const calAD = document.getElementById('calAD');
+const birthBSFields = document.getElementById('birthBSFields');
+const birthADFields = document.getElementById('birthADFields');
+calBS.addEventListener('click', () => {
+  calBS.classList.add('active'); calAD.classList.remove('active');
+  birthBSFields.style.display = 'flex'; birthADFields.style.display = 'none';
+});
+calAD.addEventListener('click', () => {
+  calAD.classList.add('active'); calBS.classList.remove('active');
+  birthADFields.style.display = 'flex'; birthBSFields.style.display = 'none';
+});
+
+document.getElementById('calcAgeBtn').addEventListener('click', () => {
+  const errEl = document.getElementById('errAge');
+  const wrap = document.getElementById('ageResultWrap');
+  errEl.classList.remove('show'); wrap.style.display = 'none';
+
+  let birthAdY, birthAdM, birthAdD, birthBsLabel = null;
+
+  try{
+    if(calBS.classList.contains('active')){
+      const y = +birthBsYear.value, m = +birthBsMonth.value, d = +birthBsDay.value;
+      const ad = bsToAD(y, m, d);
+      birthAdY = ad.year; birthAdM = ad.month; birthAdD = ad.date;
+      birthBsLabel = `${monthNames[m]} ${d}, ${y} BS`;
+    } else {
+      const val = document.getElementById('birthAdDate').value;
+      if(!val) throw new Error('Please choose a date of birth.');
+      const [y, m, d] = val.split('-').map(Number);
+      birthAdY = y; birthAdM = m - 1; birthAdD = d;
+      try{
+        const bs = adToBS(y, m - 1, d);
+        birthBsLabel = `${monthNames[bs.month]} ${bs.date}, ${bs.year} BS`;
+      }catch(e){ birthBsLabel = null; }
+    }
+
+    const birthUTC = Date.UTC(birthAdY, birthAdM, birthAdD);
+    const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    if(birthUTC > todayUTC) throw new Error('Date of birth must be in the past.');
+
+    let years = now.getFullYear() - birthAdY;
+    let months = now.getMonth() - birthAdM;
+    let days = now.getDate() - birthAdD;
+    if(days < 0){
+      months -= 1;
+      const daysInPrevMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 0)).getUTCDate();
+      days += daysInPrevMonth;
+    }
+    if(months < 0){ years -= 1; months += 12; }
+
+    const totalDays = Math.round((todayUTC - birthUTC) / 86400000);
+    const totalWeeks = Math.floor(totalDays / 7);
+
+    let nextBday = new Date(Date.UTC(now.getFullYear(), birthAdM, birthAdD));
+    if(nextBday.getTime() < todayUTC) nextBday = new Date(Date.UTC(now.getFullYear() + 1, birthAdM, birthAdD));
+    const daysToNext = Math.round((nextBday.getTime() - todayUTC) / 86400000);
+
+    document.getElementById('ageBig').textContent = years;
+    document.getElementById('ageBreakdown').textContent = `${months} months, ${days} days`;
+    document.getElementById('statDays').textContent = totalDays.toLocaleString();
+    document.getElementById('statWeeks').textContent = totalWeeks.toLocaleString();
+    document.getElementById('statNextBday').textContent = daysToNext === 0 ? 'Today!' : daysToNext;
+    document.getElementById('equivDate').textContent = birthBsLabel
+      ? `Born ${monthNamesEn(birthAdM)} ${birthAdD}, ${birthAdY} AD  ·  ${birthBsLabel}`
+      : `Born ${monthNamesEn(birthAdM)} ${birthAdD}, ${birthAdY} AD`;
+
+    wrap.style.display = 'block';
+  }catch(e){
+    errEl.textContent = e.message; errEl.classList.add('show');
+  }
+});
 </script>
 </body>
 </html>
